@@ -14,6 +14,7 @@ library(oddsratio)
 library(scales)
 library(knitr)
 library(kableExtra)
+library(here)
 library(MOTE)
 `%+%` <- paste0
 
@@ -163,6 +164,8 @@ continuous_outcomes <- df %>%
 
 for(x in continuous_outcomes) {
   
+  print(x)
+  
   # Descriptive statistics
   df %>%
     group_by(self_id) %>%
@@ -289,6 +292,75 @@ p_values %>%
 
 ### Figures
 
+Traits
+
+```{r}
+df %>%
+  select(response_id, self_id, starts_with("cati"), raads_sum) %>%
+  pivot_longer(
+    c(starts_with("cati"), raads_sum)
+  ) %>%
+  drop_na() %>%
+  group_by(self_id, name) %>%
+  summarize(mean = mean(value),
+            se = sd(value) / sqrt(n()),
+            .groups = "drop") %>%
+  mutate(ci_high = mean + (1.96 * se),
+         ci_low = mean - (1.96 * se)) %>%
+  ggplot(aes(self_id, mean, group = self_id)) +
+  geom_col(aes(fill = self_id), position = "dodge") +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), position = position_dodge(.9), width = .25) +
+  scale_x_discrete(name = "Group", labels = c("Diagnosis", "Self-ID")) +
+  scale_y_continuous(name = "Mean") +
+  scale_fill_discrete(name = "Group", labels = c("Diagnosis", "Self-ID")) +
+  ggtitle("Autistic Traits by Group") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  facet_wrap(~ name, ncol = 4, scales = "free")
+
+ggsave(filename = here("Figures", "Autistic Traits by Group.png"),
+       width = 8,
+       height = 5,
+       units = "in")
+```
+
+Supports
+
+```{r}
+df %>%
+  select(response_id, self_id, starts_with("support"), -ends_with("total")) %>%
+  pivot_longer(
+    starts_with("support")
+  ) %>%
+  group_by(self_id, name) %>%
+  summarize(prop = mean(value),
+            se = sd(value) / sqrt(n()),
+            .groups = "drop") %>%
+  mutate(ci_high = prop + (1.96 * se),
+         ci_low = prop - (1.96 * se),
+         vartype = case_when(
+           grepl("current", name) ~ "Current",
+           grepl("past", name) ~ "Past",
+           grepl("need", name) ~ "Need"
+         ) %>%
+           factor(levels = c("Past", "Current", "Need")),
+         support = gsub("^([^_]*_){2}", "", name)) %>%
+  ggplot(aes(support, prop, group = self_id)) +
+  geom_col(aes(fill = self_id), position = "dodge") +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), position = position_dodge(.9), width = .25) +
+  scale_x_discrete(name = "Support Type") +
+  scale_y_continuous(name = "Percent", labels = scales::percent) +
+  scale_fill_discrete(name = "Group", labels = c("Diagnosis", "Self-ID")) +
+  ggtitle("Support Access and Need by Group") +
+  theme_classic() +
+  facet_wrap(~ vartype, ncol = 1)
+
+ggsave(filename = here("Figures", "Supports by Group.png"),
+       width = 8,
+       height = 5,
+       units = "in")
+```
+
 PHQ-2
 
 ```{r}
@@ -337,7 +409,17 @@ bind_rows(
   tibble(group = "General Population", phq_dep = dep_norm_temp)
 ) %>%
   ggplot() +
-  geom_density(aes(phq_dep, group = group, fill = group), alpha = .25, bw = 1)
+  geom_density(aes(phq_dep, group = group, fill = group), alpha = .25, bw = 1) +
+  scale_x_continuous(name = "PHQ-2 Sum Score") +
+  scale_y_continuous(name = "Density", labels = scales::percent) +
+  scale_fill_discrete(name = "Group") +
+  ggtitle("Depression Symptom Severity by Group") +
+  theme_classic()
+
+ggsave(filename = here("Figures", "Depression by Group.png"),
+       width = 6,
+       height = 4,
+       units = "in")
 ```
 
 GAD-2
@@ -388,7 +470,17 @@ bind_rows(
   tibble(group = "General Population", phq_anx = anx_norm_temp)
 ) %>%
   ggplot() +
-  geom_density(aes(phq_anx, group = group, fill = group), alpha = .25, bw = 1)
+  geom_density(aes(phq_anx, group = group, fill = group), alpha = .25, bw = 1) +
+  scale_x_continuous(name = "GAD-2 Sum Score") +
+  scale_y_continuous(name = "Density", labels = scales::percent) +
+  scale_fill_discrete(name = "Group") +
+  ggtitle("Anxiety Symptom Severity by Group") +
+  theme_classic()
+
+ggsave(filename = here("Figures", "Anxiety by Group.png"),
+       width = 6,
+       height = 4,
+       units = "in")
 ```
 
 WEMWBS
@@ -412,7 +504,17 @@ bind_rows(
   tibble(group = "General Population", wemwbs = wemwbs_norm)
 ) %>%
   ggplot() +
-  geom_density(aes(wemwbs, group = group, fill = group), alpha = .25, bw = 5)
+  geom_density(aes(wemwbs, group = group, fill = group), alpha = .25, bw = 5) +
+  scale_x_continuous(name = "WEMWBS Sum Score") +
+  scale_y_continuous(name = "Density", labels = scales::percent) +
+  scale_fill_discrete(name = "Group") +
+  ggtitle("Well-Being by Group") +
+  theme_classic()
+
+ggsave(filename = here("Figures", "Well-Being by Group.png"),
+       width = 6,
+       height = 4,
+       units = "in")
 ```
 
 ### Follow-Up: Outcomes by Support Need
@@ -465,4 +567,20 @@ commonality(
 ) %>%
   kable() %>%
   kable_styling()
+```
+
+### Equivalence Testing
+
+```{r}
+# MOTE::d.ind.t(m1 = id_mean, m2 = dx_mean, sd1 = id_sd, sd2 = dx_sd, n1 = sum(df$self_id), n2 = sum(!df$self_id))
+# 
+# TOSTER::tsum_TOST(m1 = id_mean, m2 = dx_mean, sd1 = id_sd, sd2 = dx_sd, n1 = sum(df$self_id), n2 = sum(!df$self_id),
+#                   hypothesis = "EQU",
+#                   paired = F,
+#                   var.equal = F,
+#                   eqb = .3,
+#                   alpha = .025, #The only difference between this and the MOTE version is this uses two one-tailed tests, and so relies on a 90% CI if the alpha = .05
+#                   eqbound_type = "SMD")
+
+
 ```
