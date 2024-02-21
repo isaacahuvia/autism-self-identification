@@ -306,7 +306,18 @@ df %>%
             se = sd(value) / sqrt(n()),
             .groups = "drop") %>%
   mutate(ci_high = mean + (1.96 * se),
-         ci_low = mean - (1.96 * se)) %>%
+         ci_low = mean - (1.96 * se),
+         name = recode_factor(
+           name, 
+           "cati_com" = "Communication",
+           "cati_rep" = "Repetitive Behaviors",
+           "cati_rig" = "Cognitive Rigidity",
+           "cati_sen" = "Sensory Sensitivity",
+           "cati_soc" = "Social Interactions",
+           "cati_cam" = "Social Camouflage",
+           "cati_sum" = "CATI Sum",
+           "raads_sum" = "RAADS-14 Sum"
+         )) %>%
   ggplot(aes(self_id, mean, group = self_id)) +
   geom_col(aes(fill = self_id), position = "dodge") +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), position = position_dodge(.9), width = .25) +
@@ -344,7 +355,16 @@ df %>%
            grepl("need", name) ~ "Need"
          ) %>%
            factor(levels = c("Past", "Current", "Need")),
-         support = gsub("^([^_]*_){2}", "", name)) %>%
+         support = name %>%
+           gsub("^([^_]*_){2}", "", .) %>%
+           recode_factor(
+             "case_management" = "Case Management",
+             "functional" = "Functional\n(e.g., Speech\nTherapy)",
+             "health" = "Health\n(e.g., Specialized\nMedical Care)",
+             "mental_health" = "Mental Health\n(e.g., Therapy)",
+             "social" = "Social\n(e.g., Social\nSkills Training)",
+             "vocational" = "Vocational\n(e.g., Job Training)"
+           )) %>%
   ggplot(aes(support, prop, group = self_id)) +
   geom_col(aes(fill = self_id), position = "dodge") +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), position = position_dodge(.9), width = .25) +
@@ -353,7 +373,7 @@ df %>%
   scale_fill_discrete(name = "Group", labels = c("Diagnosis", "Self-ID")) +
   ggtitle("Support Access and Need by Group") +
   theme_classic() +
-  facet_wrap(~ vartype, ncol = 1)
+  facet_wrap(~ vartype, ncol = 1, scales = "free")
 
 ggsave(filename = here("Figures", "Supports by Group.png"),
        width = 8,
