@@ -1,8 +1,6 @@
 ######################
 ####  Clean Data  ####
 ######################
-# Clean and output qual + quant data for analysis
-
 
 ## Startup
 library(tidyverse)
@@ -13,6 +11,16 @@ library(qualtRics)
 ## Load data
 # Raw data (see 1_Pull Raw Data.R)
 raw_data <- readRDS("H:\\My Drive\\Research\\Projects\\Autism Identification\\Data\\Qualtrics Raw Data.rds")
+
+# Prolific IDs (for deduplication)
+prolific_ids <- bind_rows(
+  read.csv("H:\\My Drive\\Research\\Projects\\Autism Identification\\Data\\Prolific Demographics\\prolific_export_654d2307ccdc612e1c3652de.csv"),
+  read.csv("H:\\My Drive\\Research\\Projects\\Autism Identification\\Data\\Prolific Demographics\\prolific_export_654d22ce099cb0a0fd753451.csv")
+) %>%
+  select(
+    prolific_id = Participant.id, 
+    status = Status
+  )
 
 # Coded qualitative data (WIP)
 
@@ -27,6 +35,33 @@ age_first_aware_recoding <- read.csv("H:\\My Drive\\Research\\Projects\\Autism I
 ## Limit to those who consent
 consenters <- raw_data %>%
   filter(consent %in% "I agree to participate in this study")
+
+
+## Limit to participants with valid Prolific IDs
+consenters_with_prolific_ids <- consenters %>%
+  left_join(prolific_ids, by = "prolific_id") %>%
+  drop_na(prolific_id)
+
+
+## Limit to non-duplicated participants
+duplicated_prolific_ids <- consenters_with_prolific_ids %>%
+  drop_na(prolific_id) %>%
+  filter(duplicated(prolific_id)) %>%
+  pull(prolific_id)
+
+# Identify duplicate
+consenters_with_prolific_ids %>%
+  filter(prolific_id %in% duplicated_prolific_ids) # Two rows from one responder
+
+# Manually grab the repsonse ID of the incomplete response, to filter out
+duplicated_id <- consenters_with_prolific_ids %>%
+  filter(prolific_id %in% duplicated_prolific_ids,
+         Finished == F) %>%
+  pull(ResponseId)
+
+# Remove duplicate
+nonduplicates <- consenters_with_prolific_ids %>%
+  filter(ResponseId != duplicated_id)
 
 
 ## Manually correct "problems" in speaking variables
@@ -49,11 +84,11 @@ for(x in c("speaking_child", "speaking_child_AAC", "speaking_now", "speaking_now
 
 ## Manually correct fishy values
 # 65425c72d94cab4a2b4caae4 listed their age as 5; set to NA
-consenters$age[consenters$prolific_id == "65425c72d94cab4a2b4caae4"] <- NA
+nonduplicates$age[nonduplicates$prolific_id == "65425c72d94cab4a2b4caae4"] <- NA
 
 
 ## Recode variables
-recoded_data <- consenters %>%
+recoded_data <- nonduplicates %>%
   
   left_join(age_first_aware_recoding, by = "aware_when") %>%
   
@@ -422,6 +457,7 @@ selected_data <- recoded_data %>%
          starts_with("support_"), starts_with("autism_"),
          age_first_aware, age_first_dx, fam_dx, friend_dx, famfriend_dx, fam_id, friend_id, 
          famfriend_id, nodx_want, disability_autism)
+
 
 
 ## Save complete and pre-registered datasets

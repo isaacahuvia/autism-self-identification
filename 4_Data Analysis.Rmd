@@ -67,6 +67,13 @@ df$autism_dis <- as.character(df$autism_dis)
 # Sample Description
 
 ```{r}
+# Diagnosis
+df %>%
+  count(self_id) %>%
+  mutate(percent = percent(n / sum(n), .1)) %>%
+  kable() %>%
+  kable_styling()
+
 # Age
 df %>%
   summarize(mean = mean(age, na.rm = T),
