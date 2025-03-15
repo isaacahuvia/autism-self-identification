@@ -580,73 +580,8 @@ display: none;
 
 <div id="appendix-a-detailed-sample-description" class="section level1">
 <h1>Appendix A: Detailed Sample Description</h1>
-<pre class="r"><code>n_percent &lt;- function(n) n %+% &quot; (&quot; %+% percent(n / sum(n), .1) %+% &quot;)&quot;
-mean_sd &lt;- function(x) round(mean(x, na.rm = T), 1) %+% &quot; (&quot; %+% round(sd(x, na.rm = T), 1) %+% &quot;)&quot;
-
-get_descriptive_count &lt;- function(x) {
-  
-  x_char &lt;- as_name(enquo(x))
-  
-  full_sample &lt;- df %&gt;%
-    count({{x}}) %&gt;%
-    drop_na() %&gt;%
-    mutate(full_sample = n_percent(n)) %&gt;%
-    select(-n)
-  
-  by_group &lt;- df %&gt;%
-    group_by(self_id_char) %&gt;%
-    count({{x}}) %&gt;%
-    drop_na() %&gt;%
-    mutate(by_group = n_percent(n)) %&gt;%
-    pivot_wider(names_from = &quot;self_id_char&quot;, values_from = &quot;by_group&quot;, id_cols = all_of(x_char)) %&gt;%
-    select({{x}}, `Self-Identifying`, Diagnosed)
-  
-  combined &lt;- full_join(
-    full_sample, 
-    by_group, 
-    by = x_char,
-    relationship = &quot;one-to-one&quot;
-  )
-  
-  combined %&gt;%
-    kable() %&gt;%
-    kable_styling() %&gt;%
-    return()
-
-}
-
-get_descriptive_continuous &lt;- function(x) {
-  
-  x_char &lt;- as_name(enquo(x))
-  
-  full_sample &lt;- df %&gt;%
-    summarize(full_sample = mean_sd({{x}})) %&gt;%
-    mutate(var = x_char) %&gt;%
-    select(var, full_sample)
-  
-  by_group &lt;- df %&gt;%
-    group_by(self_id_char) %&gt;%
-    summarize(by_group = mean_sd({{x}})) %&gt;%
-    pivot_wider(names_from = &quot;self_id_char&quot;, values_from = &quot;by_group&quot;) %&gt;%
-    mutate(var = x_char) %&gt;%
-    select(var, `Self-Identifying`, Diagnosed)
-  
-  combined &lt;- full_join(
-    full_sample, 
-    by_group, 
-    by = &quot;var&quot;,
-    relationship = &quot;one-to-one&quot;
-  )
-  
-  combined %&gt;%
-    kable() %&gt;%
-    kable_styling() %&gt;%
-    return()
-  
-}
-
-# Diagnosis
-get_descriptive_count(self_id)</code></pre>
+<pre class="r"><code># Diagnosis
+get_descriptive_count(&quot;self_id&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -696,7 +631,7 @@ NA
 </tbody>
 </table>
 <pre class="r"><code># Age
-get_descriptive_continuous(age)</code></pre>
+get_descriptive_continuous(&quot;age&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -732,7 +667,7 @@ age
 </tbody>
 </table>
 <pre class="r"><code># Gender
-get_descriptive_count(gender)</code></pre>
+get_descriptive_count(&quot;gender&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -795,7 +730,7 @@ TGD
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(gender_3)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;gender_3&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -844,7 +779,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(gender_4)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;gender_4&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -893,7 +828,7 @@ Transgender
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(gender_5)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;gender_5&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -942,7 +877,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(gender_6)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;gender_6&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -991,7 +926,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(gender_7)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;gender_7&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1040,7 +975,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(gender_8)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;gender_8&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1089,7 +1024,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(gender_9)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;gender_9&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1138,7 +1073,7 @@ Two spirit
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(gender_10)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;gender_10&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1187,7 +1122,7 @@ Questioning
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(gender_12) # No values for 11 (&quot;I don&#39;t know&quot;)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;gender_12&quot;) # No values for 11 (&quot;I don&#39;t know&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1237,7 +1172,7 @@ Not Selected
 </tbody>
 </table>
 <pre class="r"><code># Sexuality
-get_descriptive_count(sexuality)</code></pre>
+get_descriptive_count(&quot;sexuality&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1286,7 +1221,7 @@ Straight
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(sexuality_2)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;sexuality_2&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1335,7 +1270,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(sexuality_3)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;sexuality_3&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1384,7 +1319,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(sexuality_4)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;sexuality_4&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1433,7 +1368,7 @@ Pansexual
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(sexuality_5)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;sexuality_5&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1482,7 +1417,7 @@ Queer
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(sexuality_6)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;sexuality_6&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1531,7 +1466,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(sexuality_7)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;sexuality_7&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1580,7 +1515,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(sexuality_8)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;sexuality_8&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1629,7 +1564,7 @@ Not Selected
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(sexuality_9)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;sexuality_9&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1678,7 +1613,7 @@ NA
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(sexuality_10)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;sexuality_10&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1728,7 +1663,7 @@ Not Selected
 </tbody>
 </table>
 <pre class="r"><code># Race/ethnicity
-get_descriptive_count(race_ethnicity)</code></pre>
+get_descriptive_count(&quot;race_ethnicity&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1834,7 +1769,7 @@ White non-Hispanic
 </tbody>
 </table>
 <pre class="r"><code># Education
-get_descriptive_count(education)</code></pre>
+get_descriptive_count(&quot;education&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1969,7 +1904,7 @@ Some college
 </tbody>
 </table>
 <pre class="r"><code># Employment
-get_descriptive_count(employment_employed)</code></pre>
+get_descriptive_count(&quot;employment_employed&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2018,7 +1953,7 @@ TRUE
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(employment_unemployed)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;employment_unemployed&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2067,7 +2002,7 @@ TRUE
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(employment_student)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;employment_student&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2116,7 +2051,7 @@ TRUE
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(employment_retired)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;employment_retired&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2165,7 +2100,7 @@ TRUE
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(employment_homemaker)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;employment_homemaker&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2214,7 +2149,7 @@ TRUE
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>get_descriptive_count(employment_unable)</code></pre>
+<pre class="r"><code>get_descriptive_count(&quot;employment_unable&quot;)</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2267,37 +2202,10 @@ TRUE
 <div id="rq-1-who-self-identifies-as-autistic-without-a-formal-diagnosis" class="section level1">
 <h1>RQ 1: Who self-identifies as autistic without a formal
 diagnosis?</h1>
-<pre class="r"><code>rq1_out &lt;- tibble()</code></pre>
-<div id="a.-what-demographic-factors-age-gender-sexuality-race-employment-education-are-associated-with-autism-self-identification" class="section level2">
-<h2>1A. What demographic factors (age, gender, sexuality, race,
-employment, education) are associated with autism
-self-identification?</h2>
-</div>
-<div id="b.-what-autistic-traits-social-interaction-communication-social-camouflage-cognitive-rigidity-repetitive-behaviors-sensory-sensitivity-speech-raads-14-score-are-associated-with-autism-self-identification" class="section level2">
-<h2>1B. What autistic traits (social interaction, communication, social
-camouflage, cognitive rigidity, repetitive behaviors, sensory
-sensitivity, speech, RAADS-14 score) are associated with autism
-self-identification?</h2>
-</div>
-<div id="c.-what-psychosocial-outcomes-depression-anxiety-disability-impairment-wellbeing-autism-community-belonging-are-associated-with-autism-self-identification" class="section level2">
-<h2>1C. What psychosocial outcomes (depression, anxiety, disability,
-impairment, wellbeing, autism community belonging) are associated with
-autism self-identification?</h2>
-</div>
-<div id="d.-what-support-needs-currentpastunmet-need-of-various-support-services-are-associated-with-autism-self-identification" class="section level2">
-<h2>1D. What support needs (current/past/unmet need of various support
-services) are associated with autism self-identification?</h2>
-</div>
-<div id="e.-what-beliefs-about-autism-what-defines-autism-is-it-a-disability-are-associated-with-autism-self-identification" class="section level2">
-<h2>1E. What beliefs about autism (what defines “autism,” is it a
-disability) are associated with autism self-identification?</h2>
-</div>
-<div id="f.-what-other-aspects-of-a-persons-autistic-experience-age-first-aware-having-autistic-family-or-friends-are-associated-with-autism-self-identification" class="section level2">
-<h2>1F. What other aspects of a person’s autistic experience (age first
-aware, having autistic family or friends) are associated with autism
-self-identification?</h2>
-<div id="tests-of-continuous-outcomes" class="section level3">
-<h3>Tests of Continuous Outcomes</h3>
+<div id="descriptive-statistics" class="section level2">
+<h2>Descriptive Statistics</h2>
+<div id="continuous-outcomes" class="section level3">
+<h3>Continuous Outcomes</h3>
 <pre class="r"><code># Pull names for continuous variables
 continuous_outcomes &lt;- df %&gt;%
   select(age,
@@ -2312,36 +2220,900 @@ continuous_outcomes &lt;- df %&gt;%
          age_first_aware) %&gt;%
   names()
 
-# Function to analyze continuous variables
+# Print descriptives
+map(
+  .x = continuous_outcomes,
+  .f = get_descriptive_continuous
+)</code></pre>
+[[1]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+age
+</td>
+<td style="text-align:left;">
+35.8 (10.1)
+</td>
+<td style="text-align:left;">
+36.4 (10.5)
+</td>
+<td style="text-align:left;">
+35.1 (9.7)
+</td>
+</tr>
+</tbody>
+</table>
+[[2]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cati_soc
+</td>
+<td style="text-align:left;">
+29.2 (5.4)
+</td>
+<td style="text-align:left;">
+30.0 (4.6)
+</td>
+<td style="text-align:left;">
+28.1 (6.2)
+</td>
+</tr>
+</tbody>
+</table>
+[[3]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cati_com
+</td>
+<td style="text-align:left;">
+22.4 (5.7)
+</td>
+<td style="text-align:left;">
+22.1 (5.7)
+</td>
+<td style="text-align:left;">
+22.7 (5.8)
+</td>
+</tr>
+</tbody>
+</table>
+[[4]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cati_cam
+</td>
+<td style="text-align:left;">
+27.1 (5.5)
+</td>
+<td style="text-align:left;">
+27.0 (5.6)
+</td>
+<td style="text-align:left;">
+27.3 (5.3)
+</td>
+</tr>
+</tbody>
+</table>
+[[5]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cati_rig
+</td>
+<td style="text-align:left;">
+28.9 (4.8)
+</td>
+<td style="text-align:left;">
+28.7 (4.5)
+</td>
+<td style="text-align:left;">
+29.2 (5.2)
+</td>
+</tr>
+</tbody>
+</table>
+[[6]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cati_rep
+</td>
+<td style="text-align:left;">
+27.2 (5.6)
+</td>
+<td style="text-align:left;">
+26.8 (5.5)
+</td>
+<td style="text-align:left;">
+27.8 (5.6)
+</td>
+</tr>
+</tbody>
+</table>
+[[7]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cati_sen
+</td>
+<td style="text-align:left;">
+26.8 (5.6)
+</td>
+<td style="text-align:left;">
+27.1 (5.3)
+</td>
+<td style="text-align:left;">
+26.4 (6.0)
+</td>
+</tr>
+</tbody>
+</table>
+[[8]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+cati_sum
+</td>
+<td style="text-align:left;">
+161.6 (22.0)
+</td>
+<td style="text-align:left;">
+161.7 (20.1)
+</td>
+<td style="text-align:left;">
+161.5 (24.3)
+</td>
+</tr>
+</tbody>
+</table>
+[[9]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+raads_sum
+</td>
+<td style="text-align:left;">
+29.4 (8.7)
+</td>
+<td style="text-align:left;">
+29.8 (8.4)
+</td>
+<td style="text-align:left;">
+28.8 (9.1)
+</td>
+</tr>
+</tbody>
+</table>
+[[10]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+phq_dep
+</td>
+<td style="text-align:left;">
+2.7 (2.1)
+</td>
+<td style="text-align:left;">
+2.8 (2.1)
+</td>
+<td style="text-align:left;">
+2.5 (2.2)
+</td>
+</tr>
+</tbody>
+</table>
+[[11]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+phq_anx
+</td>
+<td style="text-align:left;">
+3.1 (2.0)
+</td>
+<td style="text-align:left;">
+3.3 (2.0)
+</td>
+<td style="text-align:left;">
+2.7 (1.9)
+</td>
+</tr>
+</tbody>
+</table>
+[[12]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+whodas_sum
+</td>
+<td style="text-align:left;">
+15.6 (9.3)
+</td>
+<td style="text-align:left;">
+16.6 (9.7)
+</td>
+<td style="text-align:left;">
+14.4 (8.7)
+</td>
+</tr>
+</tbody>
+</table>
+[[13]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+wemwbs_sum
+</td>
+<td style="text-align:left;">
+39.5 (11.7)
+</td>
+<td style="text-align:left;">
+37.4 (11.5)
+</td>
+<td style="text-align:left;">
+42.1 (11.4)
+</td>
+</tr>
+</tbody>
+</table>
+[[14]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+support_current_total
+</td>
+<td style="text-align:left;">
+0.8 (1.1)
+</td>
+<td style="text-align:left;">
+0.6 (0.9)
+</td>
+<td style="text-align:left;">
+1.1 (1.2)
+</td>
+</tr>
+</tbody>
+</table>
+[[15]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+support_past_total
+</td>
+<td style="text-align:left;">
+2.0 (1.7)
+</td>
+<td style="text-align:left;">
+1.5 (1.4)
+</td>
+<td style="text-align:left;">
+2.6 (1.9)
+</td>
+</tr>
+</tbody>
+</table>
+[[16]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+support_need_total
+</td>
+<td style="text-align:left;">
+2.0 (2.1)
+</td>
+<td style="text-align:left;">
+2.5 (2.2)
+</td>
+<td style="text-align:left;">
+1.2 (1.7)
+</td>
+</tr>
+</tbody>
+</table>
+[[17]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asis_solidarity
+</td>
+<td style="text-align:left;">
+15.1 (4.1)
+</td>
+<td style="text-align:left;">
+15.2 (4.2)
+</td>
+<td style="text-align:left;">
+14.8 (4.0)
+</td>
+</tr>
+</tbody>
+</table>
+[[18]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asis_satisfaction
+</td>
+<td style="text-align:left;">
+15.5 (5.5)
+</td>
+<td style="text-align:left;">
+15.3 (5.4)
+</td>
+<td style="text-align:left;">
+15.7 (5.7)
+</td>
+</tr>
+</tbody>
+</table>
+[[19]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asis_centrality
+</td>
+<td style="text-align:left;">
+9.0 (2.9)
+</td>
+<td style="text-align:left;">
+8.7 (3.0)
+</td>
+<td style="text-align:left;">
+9.3 (2.8)
+</td>
+</tr>
+</tbody>
+</table>
+[[20]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asis_self_stereotyping
+</td>
+<td style="text-align:left;">
+9.5 (2.5)
+</td>
+<td style="text-align:left;">
+9.8 (2.5)
+</td>
+<td style="text-align:left;">
+9.1 (2.4)
+</td>
+</tr>
+</tbody>
+</table>
+[[21]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asis_in_group_homogeneity
+</td>
+<td style="text-align:left;">
+8.8 (2.4)
+</td>
+<td style="text-align:left;">
+9.0 (2.4)
+</td>
+<td style="text-align:left;">
+8.6 (2.4)
+</td>
+</tr>
+</tbody>
+</table>
+[[22]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asis_self_investment
+</td>
+<td style="text-align:left;">
+39.4 (10.0)
+</td>
+<td style="text-align:left;">
+39.2 (10.2)
+</td>
+<td style="text-align:left;">
+39.8 (9.9)
+</td>
+</tr>
+</tbody>
+</table>
+[[23]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asis_self_definition
+</td>
+<td style="text-align:left;">
+18.3 (4.6)
+</td>
+<td style="text-align:left;">
+18.8 (4.6)
+</td>
+<td style="text-align:left;">
+17.7 (4.5)
+</td>
+</tr>
+</tbody>
+</table>
+[[24]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asis_sum
+</td>
+<td style="text-align:left;">
+173.1 (40.1)
+</td>
+<td style="text-align:left;">
+173.8 (41.0)
+</td>
+<td style="text-align:left;">
+172.2 (38.9)
+</td>
+</tr>
+</tbody>
+</table>
+[[25]]
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+var
+</th>
+<th style="text-align:left;">
+full_sample
+</th>
+<th style="text-align:left;">
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+age_first_aware
+</td>
+<td style="text-align:left;">
+23.3 (11.5)
+</td>
+<td style="text-align:left;">
+26.7 (10.8)
+</td>
+<td style="text-align:left;">
+18.8 (10.9)
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># Function to analyze continuous variables
 output_continuous &lt;- function(x) {
-
-  # Calculate descriptive statistics
-  descriptive &lt;- df %&gt;%
-    group_by(self_id) %&gt;%
-    summarize(
-      mean = mean(get(x), na.rm = T),
-      sd = sd(get(x), na.rm = T)
-    ) %&gt;%
-    mutate(
-      output = round(mean, 1) %+% &quot; (&quot; %+% round(sd, 1) %+% &quot;)&quot;
-    )
 
   # Calculate test statistic
   test &lt;- t_test(
     x = df,
     formula = as.formula(x %+% &quot; ~ self_id&quot;),
-    order = c(&quot;TRUE&quot;, &quot;FALSE&quot;) # Doesn&#39;t do anything important, but supresses a warning
-  ) %&gt;%
-    mutate(
-      output = &quot;t(&quot; %+% round(t_df) %+% &quot;) = &quot; %+% round(statistic, 2)
-    )
+    order = c(&quot;TRUE&quot;, &quot;FALSE&quot;) # Doesn&#39;t do anything important, but suppresses a warning
+  )
 
   # Format output
   out &lt;- tibble(
-    self_id = descriptive$output[descriptive$self_id],
-    diagnosed = descriptive$output[!descriptive$self_id],
-    statistic = test$output,
-    p = round(test$p_value, 3)
+    statistic = &quot;t(&quot; %+% round(test$t_df) %+% &quot;) = &quot; %+% round(test$statistic, 2),
+    p = test$p_value
   )
 
   return(out)
@@ -2356,8 +3128,8 @@ rq1_continuous &lt;- map(
   set_names(continuous_outcomes) %&gt;%
   bind_rows(.id = &quot;x&quot;) </code></pre>
 </div>
-<div id="tests-of-nominal-outcomes" class="section level3">
-<h3>Tests of Nominal Outcomes</h3>
+<div id="nominal-outcomes" class="section level3">
+<h3>Nominal Outcomes</h3>
 <pre class="r"><code># Pull names for nominal variables
 nominal_outcomes &lt;- df %&gt;%
   select(gender, 
@@ -2372,71 +3144,12 @@ nominal_outcomes &lt;- df %&gt;%
          starts_with(&quot;friend&quot;)) %&gt;%
   names()
 
-# Function to analyze nominal variables
-output_nominal &lt;- function(x) {
-
-  # Print descriptive statistics
-  df %&gt;%
-    group_by(self_id) %&gt;%
-    count(!!x := get(x)) %&gt;%
-    drop_na() %&gt;%
-    mutate(
-      output = n %+% &quot; (&quot; %+% percent(n / sum(n), .1) %+% &quot;)&quot;
-    ) %&gt;%
-    pivot_wider(
-      id_cols = x,
-      names_from = &quot;self_id&quot;,
-      values_from = &quot;output&quot;
-    ) %&gt;%
-    select(
-      x,
-      self_id = `TRUE`,
-      diagnosed = `FALSE`
-    ) %&gt;%
-    kable() %&gt;%
-    kable_styling() %&gt;%
-    print()
-
-  # Calculate test statistic
-  test &lt;- chisq_test(
-    x = df,
-    formula = as.formula(x %+% &quot; ~ self_id&quot;)
-  ) %&gt;%
-    mutate(
-      output = &quot;X2(&quot; %+% round(chisq_df) %+% &quot;) = &quot; %+% round(statistic, 2)
-    )
-
-  # Format output
-  out &lt;- tibble(
-    self_id = &quot;&quot;,
-    diagnosed = &quot;&quot;,
-    statistic = test$output,
-    p = round(test$p_value, 3)
-  )
-
-  return(out)
-  
-}
-
-# Analyze nominal outcomes
-rq1_nominal &lt;- map(
+# Print descriptives
+map(
   .x = nominal_outcomes,
-  .f = output_nominal
-) %&gt;%
-  set_names(nominal_outcomes) %&gt;%
-  bind_rows(.id = &quot;x&quot;)</code></pre>
-<pre><code>## Warning: Using an external vector in selections was deprecated in tidyselect 1.1.0.
-## i Please use `all_of()` or `any_of()` instead.
-##   # Was:
-##   data %&gt;% select(x)
-## 
-##   # Now:
-##   data %&gt;% select(all_of(x))
-## 
-## See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.</code></pre>
+  .f = get_descriptive_count
+)</code></pre>
+[[1]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2444,10 +3157,13 @@ rq1_nominal &lt;- map(
 gender
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2455,6 +3171,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 Cis Female
+</td>
+<td style="text-align:left;">
+107 (42.0%)
 </td>
 <td style="text-align:left;">
 77 (53.5%)
@@ -2468,6 +3187,9 @@ Cis Female
 Cis Male
 </td>
 <td style="text-align:left;">
+100 (39.2%)
+</td>
+<td style="text-align:left;">
 38 (26.4%)
 </td>
 <td style="text-align:left;">
@@ -2479,6 +3201,9 @@ Cis Male
 TGD
 </td>
 <td style="text-align:left;">
+48 (18.8%)
+</td>
+<td style="text-align:left;">
 29 (20.1%)
 </td>
 <td style="text-align:left;">
@@ -2487,6 +3212,7 @@ TGD
 </tr>
 </tbody>
 </table>
+[[2]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2494,10 +3220,13 @@ TGD
 sexuality
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2505,6 +3234,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 SM
+</td>
+<td style="text-align:left;">
+139 (53.3%)
 </td>
 <td style="text-align:left;">
 81 (55.1%)
@@ -2518,6 +3250,9 @@ SM
 Straight
 </td>
 <td style="text-align:left;">
+122 (46.7%)
+</td>
+<td style="text-align:left;">
 66 (44.9%)
 </td>
 <td style="text-align:left;">
@@ -2526,6 +3261,7 @@ Straight
 </tr>
 </tbody>
 </table>
+[[3]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2533,10 +3269,13 @@ Straight
 race_ethnicity_bin
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2544,6 +3283,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+83 (31.7%)
 </td>
 <td style="text-align:left;">
 44 (29.9%)
@@ -2557,6 +3299,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+179 (68.3%)
+</td>
+<td style="text-align:left;">
 103 (70.1%)
 </td>
 <td style="text-align:left;">
@@ -2565,6 +3310,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[4]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2572,10 +3318,13 @@ TRUE
 employment_employed
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2583,6 +3332,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+78 (29.8%)
 </td>
 <td style="text-align:left;">
 52 (35.4%)
@@ -2596,6 +3348,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+184 (70.2%)
+</td>
+<td style="text-align:left;">
 95 (64.6%)
 </td>
 <td style="text-align:left;">
@@ -2604,6 +3359,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[5]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2611,10 +3367,13 @@ TRUE
 employment_unemployed
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2622,6 +3381,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+230 (87.8%)
 </td>
 <td style="text-align:left;">
 122 (83.0%)
@@ -2635,6 +3397,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+32 (12.2%)
+</td>
+<td style="text-align:left;">
 25 (17.0%)
 </td>
 <td style="text-align:left;">
@@ -2643,6 +3408,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[6]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2650,10 +3416,13 @@ TRUE
 employment_student
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2661,6 +3430,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+244 (93.1%)
 </td>
 <td style="text-align:left;">
 141 (95.9%)
@@ -2674,6 +3446,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+18 (6.9%)
+</td>
+<td style="text-align:left;">
 6 (4.1%)
 </td>
 <td style="text-align:left;">
@@ -2682,6 +3457,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[7]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2689,10 +3465,13 @@ TRUE
 employment_homemaker
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2700,6 +3479,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+247 (94.3%)
 </td>
 <td style="text-align:left;">
 134 (91.2%)
@@ -2713,6 +3495,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+15 (5.7%)
+</td>
+<td style="text-align:left;">
 13 (8.8%)
 </td>
 <td style="text-align:left;">
@@ -2721,6 +3506,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[8]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2728,10 +3514,13 @@ TRUE
 employment_unable
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2739,6 +3528,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+236 (90.1%)
 </td>
 <td style="text-align:left;">
 133 (90.5%)
@@ -2752,6 +3544,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+26 (9.9%)
+</td>
+<td style="text-align:left;">
 14 (9.5%)
 </td>
 <td style="text-align:left;">
@@ -2760,6 +3555,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[9]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2767,10 +3563,13 @@ TRUE
 raads_cutoff
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2778,6 +3577,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+15 (5.8%)
 </td>
 <td style="text-align:left;">
 8 (5.5%)
@@ -2791,6 +3593,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+245 (94.2%)
+</td>
+<td style="text-align:left;">
 138 (94.5%)
 </td>
 <td style="text-align:left;">
@@ -2799,6 +3604,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[10]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2806,10 +3612,13 @@ TRUE
 disability
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2817,6 +3626,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 No
+</td>
+<td style="text-align:left;">
+52 (20.2%)
 </td>
 <td style="text-align:left;">
 37 (25.5%)
@@ -2830,6 +3642,9 @@ No
 Unsure
 </td>
 <td style="text-align:left;">
+37 (14.3%)
+</td>
+<td style="text-align:left;">
 31 (21.4%)
 </td>
 <td style="text-align:left;">
@@ -2841,6 +3656,9 @@ Unsure
 Yes
 </td>
 <td style="text-align:left;">
+169 (65.5%)
+</td>
+<td style="text-align:left;">
 77 (53.1%)
 </td>
 <td style="text-align:left;">
@@ -2849,6 +3667,7 @@ Yes
 </tr>
 </tbody>
 </table>
+[[11]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2856,10 +3675,13 @@ Yes
 support_current_mental_health
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2867,6 +3689,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+166 (63.4%)
 </td>
 <td style="text-align:left;">
 106 (72.1%)
@@ -2880,6 +3705,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+96 (36.6%)
+</td>
+<td style="text-align:left;">
 41 (27.9%)
 </td>
 <td style="text-align:left;">
@@ -2888,6 +3716,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[12]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2895,10 +3724,13 @@ TRUE
 support_current_functional
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2906,6 +3738,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+252 (96.2%)
 </td>
 <td style="text-align:left;">
 146 (99.3%)
@@ -2919,6 +3754,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+10 (3.8%)
+</td>
+<td style="text-align:left;">
 1 (0.7%)
 </td>
 <td style="text-align:left;">
@@ -2927,8 +3765,7 @@ TRUE
 </tr>
 </tbody>
 </table>
-<pre><code>## Warning in stats::chisq.test(table(x), ...): Chi-squared approximation may be
-## incorrect</code></pre>
+[[13]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2936,10 +3773,13 @@ TRUE
 support_current_case_management
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2947,6 +3787,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+245 (93.5%)
 </td>
 <td style="text-align:left;">
 142 (96.6%)
@@ -2960,6 +3803,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+17 (6.5%)
+</td>
+<td style="text-align:left;">
 5 (3.4%)
 </td>
 <td style="text-align:left;">
@@ -2968,6 +3814,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[14]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2975,10 +3822,13 @@ TRUE
 support_current_social
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -2986,6 +3836,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+247 (94.3%)
 </td>
 <td style="text-align:left;">
 143 (97.3%)
@@ -2999,6 +3852,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+15 (5.7%)
+</td>
+<td style="text-align:left;">
 4 (2.7%)
 </td>
 <td style="text-align:left;">
@@ -3007,6 +3863,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[15]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3014,10 +3871,13 @@ TRUE
 support_current_vocational
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3025,6 +3885,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+250 (95.4%)
 </td>
 <td style="text-align:left;">
 144 (98.0%)
@@ -3038,6 +3901,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+12 (4.6%)
+</td>
+<td style="text-align:left;">
 3 (2.0%)
 </td>
 <td style="text-align:left;">
@@ -3046,6 +3912,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[16]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3053,10 +3920,13 @@ TRUE
 support_current_health
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3064,6 +3934,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+196 (74.8%)
 </td>
 <td style="text-align:left;">
 116 (78.9%)
@@ -3077,6 +3950,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+66 (25.2%)
+</td>
+<td style="text-align:left;">
 31 (21.1%)
 </td>
 <td style="text-align:left;">
@@ -3085,6 +3961,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[17]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3092,10 +3969,13 @@ TRUE
 support_past_mental_health
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3103,6 +3983,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+124 (47.3%)
 </td>
 <td style="text-align:left;">
 76 (51.7%)
@@ -3116,6 +3999,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+138 (52.7%)
+</td>
+<td style="text-align:left;">
 71 (48.3%)
 </td>
 <td style="text-align:left;">
@@ -3124,6 +4010,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[18]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3131,10 +4018,13 @@ TRUE
 support_past_functional
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3142,6 +4032,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+167 (63.7%)
 </td>
 <td style="text-align:left;">
 105 (71.4%)
@@ -3155,6 +4048,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+95 (36.3%)
+</td>
+<td style="text-align:left;">
 42 (28.6%)
 </td>
 <td style="text-align:left;">
@@ -3163,6 +4059,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[19]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3170,10 +4067,13 @@ TRUE
 support_past_case_management
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3181,6 +4081,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+195 (74.4%)
 </td>
 <td style="text-align:left;">
 125 (85.0%)
@@ -3194,6 +4097,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+67 (25.6%)
+</td>
+<td style="text-align:left;">
 22 (15.0%)
 </td>
 <td style="text-align:left;">
@@ -3202,6 +4108,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[20]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3209,10 +4116,13 @@ TRUE
 support_past_social
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3220,6 +4130,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+196 (74.8%)
 </td>
 <td style="text-align:left;">
 126 (85.7%)
@@ -3233,6 +4146,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+66 (25.2%)
+</td>
+<td style="text-align:left;">
 21 (14.3%)
 </td>
 <td style="text-align:left;">
@@ -3241,6 +4157,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[21]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3248,10 +4165,13 @@ TRUE
 support_past_vocational
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3259,6 +4179,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+193 (73.7%)
 </td>
 <td style="text-align:left;">
 125 (85.0%)
@@ -3272,6 +4195,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+69 (26.3%)
+</td>
+<td style="text-align:left;">
 22 (15.0%)
 </td>
 <td style="text-align:left;">
@@ -3280,6 +4206,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[22]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3287,10 +4214,13 @@ TRUE
 support_past_health
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3298,6 +4228,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+176 (67.2%)
 </td>
 <td style="text-align:left;">
 106 (72.1%)
@@ -3311,6 +4244,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+86 (32.8%)
+</td>
+<td style="text-align:left;">
 41 (27.9%)
 </td>
 <td style="text-align:left;">
@@ -3319,6 +4255,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[23]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3326,10 +4263,13 @@ TRUE
 support_need_mental_health
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3337,6 +4277,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+179 (68.3%)
 </td>
 <td style="text-align:left;">
 85 (57.8%)
@@ -3350,6 +4293,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+83 (31.7%)
+</td>
+<td style="text-align:left;">
 62 (42.2%)
 </td>
 <td style="text-align:left;">
@@ -3358,6 +4304,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[24]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3365,10 +4312,13 @@ TRUE
 support_need_functional
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3376,6 +4326,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+190 (72.5%)
 </td>
 <td style="text-align:left;">
 93 (63.3%)
@@ -3389,6 +4342,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+72 (27.5%)
+</td>
+<td style="text-align:left;">
 54 (36.7%)
 </td>
 <td style="text-align:left;">
@@ -3397,6 +4353,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[25]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3404,10 +4361,13 @@ TRUE
 support_need_case_management
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3415,6 +4375,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+191 (72.9%)
 </td>
 <td style="text-align:left;">
 96 (65.3%)
@@ -3428,6 +4391,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+71 (27.1%)
+</td>
+<td style="text-align:left;">
 51 (34.7%)
 </td>
 <td style="text-align:left;">
@@ -3436,6 +4402,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[26]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3443,10 +4410,13 @@ TRUE
 support_need_social
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3454,6 +4424,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+155 (59.2%)
 </td>
 <td style="text-align:left;">
 71 (48.3%)
@@ -3467,6 +4440,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+107 (40.8%)
+</td>
+<td style="text-align:left;">
 76 (51.7%)
 </td>
 <td style="text-align:left;">
@@ -3475,6 +4451,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[27]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3482,10 +4459,13 @@ TRUE
 support_need_vocational
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3493,6 +4473,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+163 (62.2%)
 </td>
 <td style="text-align:left;">
 77 (52.4%)
@@ -3506,6 +4489,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+99 (37.8%)
+</td>
+<td style="text-align:left;">
 70 (47.6%)
 </td>
 <td style="text-align:left;">
@@ -3514,6 +4500,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[28]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3521,10 +4508,13 @@ TRUE
 support_need_health
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3532,6 +4522,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+178 (67.9%)
 </td>
 <td style="text-align:left;">
 87 (59.2%)
@@ -3545,6 +4538,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+84 (32.1%)
+</td>
+<td style="text-align:left;">
 60 (40.8%)
 </td>
 <td style="text-align:left;">
@@ -3553,6 +4549,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[29]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3560,10 +4557,13 @@ TRUE
 autism_dis
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3571,6 +4571,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 No
+</td>
+<td style="text-align:left;">
+43 (16.4%)
 </td>
 <td style="text-align:left;">
 21 (14.3%)
@@ -3584,6 +4587,9 @@ No
 Unsure
 </td>
 <td style="text-align:left;">
+97 (37.0%)
+</td>
+<td style="text-align:left;">
 69 (46.9%)
 </td>
 <td style="text-align:left;">
@@ -3595,6 +4601,9 @@ Unsure
 Yes
 </td>
 <td style="text-align:left;">
+122 (46.6%)
+</td>
+<td style="text-align:left;">
 57 (38.8%)
 </td>
 <td style="text-align:left;">
@@ -3603,6 +4612,7 @@ Yes
 </tr>
 </tbody>
 </table>
+[[30]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3610,10 +4620,13 @@ Yes
 fam_dx
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3621,6 +4634,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+173 (66.0%)
 </td>
 <td style="text-align:left;">
 92 (62.6%)
@@ -3634,6 +4650,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+89 (34.0%)
+</td>
+<td style="text-align:left;">
 55 (37.4%)
 </td>
 <td style="text-align:left;">
@@ -3642,6 +4661,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[31]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3649,10 +4669,13 @@ TRUE
 famfriend_dx
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3660,6 +4683,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+114 (43.5%)
 </td>
 <td style="text-align:left;">
 60 (40.8%)
@@ -3673,6 +4699,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+148 (56.5%)
+</td>
+<td style="text-align:left;">
 87 (59.2%)
 </td>
 <td style="text-align:left;">
@@ -3681,6 +4710,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[32]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3688,10 +4718,13 @@ TRUE
 fam_id
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3699,6 +4732,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+201 (76.7%)
 </td>
 <td style="text-align:left;">
 111 (75.5%)
@@ -3712,6 +4748,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+61 (23.3%)
+</td>
+<td style="text-align:left;">
 36 (24.5%)
 </td>
 <td style="text-align:left;">
@@ -3720,6 +4759,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[33]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3727,10 +4767,13 @@ TRUE
 famfriend_id
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3738,6 +4781,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+135 (51.5%)
 </td>
 <td style="text-align:left;">
 69 (46.9%)
@@ -3751,6 +4797,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+127 (48.5%)
+</td>
+<td style="text-align:left;">
 78 (53.1%)
 </td>
 <td style="text-align:left;">
@@ -3759,6 +4808,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[34]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3766,10 +4816,13 @@ TRUE
 friend_dx
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3777,6 +4830,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+179 (68.3%)
 </td>
 <td style="text-align:left;">
 100 (68.0%)
@@ -3790,6 +4846,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+83 (31.7%)
+</td>
+<td style="text-align:left;">
 47 (32.0%)
 </td>
 <td style="text-align:left;">
@@ -3798,6 +4857,7 @@ TRUE
 </tr>
 </tbody>
 </table>
+[[35]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3805,10 +4865,13 @@ TRUE
 friend_id
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3816,6 +4879,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 FALSE
+</td>
+<td style="text-align:left;">
+180 (68.7%)
 </td>
 <td style="text-align:left;">
 95 (64.6%)
@@ -3829,6 +4895,9 @@ FALSE
 TRUE
 </td>
 <td style="text-align:left;">
+82 (31.3%)
+</td>
+<td style="text-align:left;">
 52 (35.4%)
 </td>
 <td style="text-align:left;">
@@ -3837,68 +4906,46 @@ TRUE
 </tr>
 </tbody>
 </table>
-</div>
-<div id="tests-of-ordinal-outcomes" class="section level3">
-<h3>Tests of Ordinal Outcomes</h3>
-<pre class="r"><code># Pull names for ordinal variables
-ordinal_outcomes &lt;- c(&quot;education_ord&quot;, &quot;speaking_now&quot;, &quot;speaking_child&quot;)
-
-# Function to analyze ordinal variables
-output_ordinal &lt;- function(x) {
-
-  # Print descriptive statistics
-  df %&gt;%
-    group_by(self_id) %&gt;%
-    count(!!x := get(x)) %&gt;%
-    drop_na() %&gt;%
-    mutate(
-      output = n %+% &quot; (&quot; %+% percent(n / sum(n), .1) %+% &quot;)&quot;
-    ) %&gt;%
-    pivot_wider(
-      id_cols = x,
-      names_from = &quot;self_id&quot;,
-      values_from = &quot;output&quot;
-    ) %&gt;%
-    select(
-      x,
-      self_id = `TRUE`,
-      diagnosed = `FALSE`
-    ) %&gt;%
-    kable() %&gt;%
-    kable_styling() %&gt;%
-    print()
-
+<pre class="r"><code># Function to analyze nominal variables
+output_nominal &lt;- function(x) {
+  
   # Calculate test statistic
-  test &lt;- wilcox.test(
-    as.numeric(df[[x]]) ~ df$self_id, 
-    na.rm = T, 
-    paired = F, 
-    exact = F
+  test &lt;- chisq_test(
+    x = df,
+    formula = as.formula(x %+% &quot; ~ self_id&quot;)
   )
-  
-  statistic &lt;- &quot;U = &quot; %+% round(test$statistic, 2)
-  
-  p_value &lt;- test$p.value
 
   # Format output
   out &lt;- tibble(
-    self_id = &quot;&quot;,
-    diagnosed = &quot;&quot;,
-    statistic = statistic,
-    p = round(p_value, 3)
+    statistic = &quot;X2(&quot; %+% round(test$chisq_df) %+% &quot;) = &quot; %+% round(test$statistic, 2),
+    p = test$p_value
   )
 
   return(out)
   
 }
 
-# Analyze ordinal outcomes
-rq1_ordinal &lt;- map(
-  .x = ordinal_outcomes,
-  .f = output_ordinal
+# Analyze nominal outcomes
+rq1_nominal &lt;- map(
+  .x = nominal_outcomes,
+  .f = output_nominal
 ) %&gt;%
-  set_names(ordinal_outcomes) %&gt;%
+  set_names(nominal_outcomes) %&gt;%
   bind_rows(.id = &quot;x&quot;)</code></pre>
+<pre><code>## Warning in stats::chisq.test(table(x), ...): Chi-squared approximation may be
+## incorrect</code></pre>
+</div>
+<div id="ordinal-outcomes" class="section level3">
+<h3>Ordinal Outcomes</h3>
+<pre class="r"><code># Pull names for ordinal variables
+ordinal_outcomes &lt;- c(&quot;education_ord&quot;, &quot;speaking_now&quot;, &quot;speaking_child&quot;)
+
+# Print descriptives
+map(
+  .x = ordinal_outcomes,
+  .f = get_descriptive_count
+)</code></pre>
+[[1]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3906,10 +4953,13 @@ rq1_ordinal &lt;- map(
 education_ord
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3917,6 +4967,9 @@ diagnosed
 <tr>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+47 (18.1%)
 </td>
 <td style="text-align:left;">
 28 (19.2%)
@@ -3930,6 +4983,9 @@ diagnosed
 2
 </td>
 <td style="text-align:left;">
+67 (25.9%)
+</td>
+<td style="text-align:left;">
 45 (30.8%)
 </td>
 <td style="text-align:left;">
@@ -3939,6 +4995,9 @@ diagnosed
 <tr>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:left;">
+28 (10.8%)
 </td>
 <td style="text-align:left;">
 14 (9.6%)
@@ -3952,6 +5011,9 @@ diagnosed
 4
 </td>
 <td style="text-align:left;">
+85 (32.8%)
+</td>
+<td style="text-align:left;">
 38 (26.0%)
 </td>
 <td style="text-align:left;">
@@ -3963,6 +5025,9 @@ diagnosed
 5
 </td>
 <td style="text-align:left;">
+32 (12.4%)
+</td>
+<td style="text-align:left;">
 21 (14.4%)
 </td>
 <td style="text-align:left;">
@@ -3971,6 +5036,7 @@ diagnosed
 </tr>
 </tbody>
 </table>
+[[2]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3978,10 +5044,13 @@ diagnosed
 speaking_now
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -3989,6 +5058,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 Rarely or none of the time
+</td>
+<td style="text-align:left;">
+4 (1.8%)
 </td>
 <td style="text-align:left;">
 1 (0.8%)
@@ -4002,6 +5074,9 @@ Rarely or none of the time
 A little of the time
 </td>
 <td style="text-align:left;">
+17 (7.5%)
+</td>
+<td style="text-align:left;">
 9 (7.2%)
 </td>
 <td style="text-align:left;">
@@ -4011,6 +5086,9 @@ A little of the time
 <tr>
 <td style="text-align:left;">
 Most of the time
+</td>
+<td style="text-align:left;">
+115 (50.7%)
 </td>
 <td style="text-align:left;">
 65 (52.0%)
@@ -4024,6 +5102,9 @@ Most of the time
 All of the time
 </td>
 <td style="text-align:left;">
+91 (40.1%)
+</td>
+<td style="text-align:left;">
 50 (40.0%)
 </td>
 <td style="text-align:left;">
@@ -4032,6 +5113,7 @@ All of the time
 </tr>
 </tbody>
 </table>
+[[3]]
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4039,10 +5121,13 @@ All of the time
 speaking_child
 </th>
 <th style="text-align:left;">
-self_id
+full_sample
 </th>
 <th style="text-align:left;">
-diagnosed
+Self-Identifying
+</th>
+<th style="text-align:left;">
+Diagnosed
 </th>
 </tr>
 </thead>
@@ -4050,6 +5135,9 @@ diagnosed
 <tr>
 <td style="text-align:left;">
 Rarely or none of the time
+</td>
+<td style="text-align:left;">
+13 (6.7%)
 </td>
 <td style="text-align:left;">
 4 (3.5%)
@@ -4063,6 +5151,9 @@ Rarely or none of the time
 A little of the time
 </td>
 <td style="text-align:left;">
+47 (24.4%)
+</td>
+<td style="text-align:left;">
 29 (25.2%)
 </td>
 <td style="text-align:left;">
@@ -4072,6 +5163,9 @@ A little of the time
 <tr>
 <td style="text-align:left;">
 Most of the time
+</td>
+<td style="text-align:left;">
+76 (39.4%)
 </td>
 <td style="text-align:left;">
 46 (40.0%)
@@ -4085,6 +5179,9 @@ Most of the time
 All of the time
 </td>
 <td style="text-align:left;">
+57 (29.5%)
+</td>
+<td style="text-align:left;">
 36 (31.3%)
 </td>
 <td style="text-align:left;">
@@ -4093,7 +5190,38 @@ All of the time
 </tr>
 </tbody>
 </table>
-<p>Adjust p-values</p>
+<pre class="r"><code># Function to analyze ordinal variables
+output_ordinal &lt;- function(x) {
+
+  # Calculate test statistic
+  test &lt;- wilcox.test(
+    as.numeric(df[[x]]) ~ df$self_id, 
+    na.rm = T, 
+    paired = F, 
+    exact = F
+  )
+  
+  # Format output
+  out &lt;- tibble(
+    statistic = &quot;U = &quot; %+% round(test$statistic, 2),
+    p = test$p.value
+  )
+
+  return(out)
+  
+}
+
+# Analyze ordinal outcomes
+rq1_ordinal &lt;- map(
+  .x = ordinal_outcomes,
+  .f = output_ordinal
+) %&gt;%
+  set_names(ordinal_outcomes) %&gt;%
+  bind_rows(.id = &quot;x&quot;)</code></pre>
+</div>
+</div>
+<div id="test-statistics-and-adjusted-p-values" class="section level2">
+<h2>Test Statistics and Adjusted <em>p</em>-Values</h2>
 <pre class="r"><code># Combine outputs
 rq1 &lt;- bind_rows(
   rq1_continuous,
@@ -4117,15 +5245,9 @@ rq1_adjusted %&gt;%
 x
 </th>
 <th style="text-align:left;">
-self_id
-</th>
-<th style="text-align:left;">
-diagnosed
-</th>
-<th style="text-align:left;">
 statistic
 </th>
-<th style="text-align:right;">
+<th style="text-align:left;">
 p.adj
 </th>
 </tr>
@@ -4136,15 +5258,9 @@ p.adj
 age
 </td>
 <td style="text-align:left;">
-36.4 (10.5)
+t(253) = 1.00
 </td>
 <td style="text-align:left;">
-35.1 (9.7)
-</td>
-<td style="text-align:left;">
-t(253) = 1
-</td>
-<td style="text-align:right;">
 0.445
 </td>
 </tr>
@@ -4153,15 +5269,9 @@ t(253) = 1
 cati_soc
 </td>
 <td style="text-align:left;">
-30 (4.6)
-</td>
-<td style="text-align:left;">
-28.1 (6.2)
-</td>
-<td style="text-align:left;">
 t(203) = 2.78
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.019
 </td>
 </tr>
@@ -4170,16 +5280,10 @@ t(203) = 2.78
 cati_com
 </td>
 <td style="text-align:left;">
-22.1 (5.7)
-</td>
-<td style="text-align:left;">
-22.7 (5.8)
-</td>
-<td style="text-align:left;">
 t(239) = -0.96
 </td>
-<td style="text-align:right;">
-0.467
+<td style="text-align:left;">
+0.466
 </td>
 </tr>
 <tr>
@@ -4187,15 +5291,9 @@ t(239) = -0.96
 cati_cam
 </td>
 <td style="text-align:left;">
-27 (5.6)
-</td>
-<td style="text-align:left;">
-27.3 (5.3)
-</td>
-<td style="text-align:left;">
 t(251) = -0.47
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.719
 </td>
 </tr>
@@ -4204,16 +5302,10 @@ t(251) = -0.47
 cati_rig
 </td>
 <td style="text-align:left;">
-28.7 (4.5)
-</td>
-<td style="text-align:left;">
-29.2 (5.2)
-</td>
-<td style="text-align:left;">
 t(225) = -0.92
 </td>
-<td style="text-align:right;">
-0.475
+<td style="text-align:left;">
+0.476
 </td>
 </tr>
 <tr>
@@ -4221,16 +5313,10 @@ t(225) = -0.92
 cati_rep
 </td>
 <td style="text-align:left;">
-26.8 (5.5)
-</td>
-<td style="text-align:left;">
-27.8 (5.6)
-</td>
-<td style="text-align:left;">
 t(240) = -1.38
 </td>
-<td style="text-align:right;">
-0.271
+<td style="text-align:left;">
+0.272
 </td>
 </tr>
 <tr>
@@ -4238,15 +5324,9 @@ t(240) = -1.38
 cati_sen
 </td>
 <td style="text-align:left;">
-27.1 (5.3)
+t(226) = 0.90
 </td>
 <td style="text-align:left;">
-26.4 (6)
-</td>
-<td style="text-align:left;">
-t(226) = 0.9
-</td>
-<td style="text-align:right;">
 0.476
 </td>
 </tr>
@@ -4255,15 +5335,9 @@ t(226) = 0.9
 cati_sum
 </td>
 <td style="text-align:left;">
-161.7 (20.1)
-</td>
-<td style="text-align:left;">
-161.5 (24.3)
-</td>
-<td style="text-align:left;">
 t(209) = 0.07
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.993
 </td>
 </tr>
@@ -4272,16 +5346,10 @@ t(209) = 0.07
 raads_sum
 </td>
 <td style="text-align:left;">
-29.8 (8.4)
-</td>
-<td style="text-align:left;">
-28.8 (9.1)
-</td>
-<td style="text-align:left;">
 t(233) = 0.91
 </td>
-<td style="text-align:right;">
-0.475
+<td style="text-align:left;">
+0.476
 </td>
 </tr>
 <tr>
@@ -4289,15 +5357,9 @@ t(233) = 0.91
 phq_dep
 </td>
 <td style="text-align:left;">
-2.8 (2.1)
-</td>
-<td style="text-align:left;">
-2.5 (2.2)
-</td>
-<td style="text-align:left;">
 t(240) = 1.22
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.338
 </td>
 </tr>
@@ -4306,15 +5368,9 @@ t(240) = 1.22
 phq_anx
 </td>
 <td style="text-align:left;">
-3.3 (2)
+t(251) = 2.30
 </td>
 <td style="text-align:left;">
-2.7 (1.9)
-</td>
-<td style="text-align:left;">
-t(251) = 2.3
-</td>
-<td style="text-align:right;">
 0.058
 </td>
 </tr>
@@ -4323,15 +5379,9 @@ t(251) = 2.3
 whodas_sum
 </td>
 <td style="text-align:left;">
-16.6 (9.7)
-</td>
-<td style="text-align:left;">
-14.4 (8.7)
-</td>
-<td style="text-align:left;">
 t(253) = 1.85
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.134
 </td>
 </tr>
@@ -4340,16 +5390,10 @@ t(253) = 1.85
 wemwbs_sum
 </td>
 <td style="text-align:left;">
-37.4 (11.5)
-</td>
-<td style="text-align:left;">
-42.1 (11.4)
-</td>
-<td style="text-align:left;">
 t(241) = -3.24
 </td>
-<td style="text-align:right;">
-0.004
+<td style="text-align:left;">
+0.005
 </td>
 </tr>
 <tr>
@@ -4357,15 +5401,9 @@ t(241) = -3.24
 support_current_total
 </td>
 <td style="text-align:left;">
-0.6 (0.9)
-</td>
-<td style="text-align:left;">
-1.1 (1.2)
-</td>
-<td style="text-align:left;">
 t(205) = -4.21
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.000
 </td>
 </tr>
@@ -4374,15 +5412,9 @@ t(205) = -4.21
 support_past_total
 </td>
 <td style="text-align:left;">
-1.5 (1.4)
-</td>
-<td style="text-align:left;">
-2.6 (1.9)
-</td>
-<td style="text-align:left;">
 t(211) = -5.42
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.000
 </td>
 </tr>
@@ -4391,15 +5423,9 @@ t(211) = -5.42
 support_need_total
 </td>
 <td style="text-align:left;">
-2.5 (2.2)
-</td>
-<td style="text-align:left;">
-1.2 (1.7)
-</td>
-<td style="text-align:left;">
 t(260) = 5.39
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.000
 </td>
 </tr>
@@ -4408,15 +5434,9 @@ t(260) = 5.39
 asis_solidarity
 </td>
 <td style="text-align:left;">
-15.2 (4.2)
-</td>
-<td style="text-align:left;">
-14.8 (4)
-</td>
-<td style="text-align:left;">
 t(246) = 0.78
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.541
 </td>
 </tr>
@@ -4425,15 +5445,9 @@ t(246) = 0.78
 asis_satisfaction
 </td>
 <td style="text-align:left;">
-15.3 (5.4)
-</td>
-<td style="text-align:left;">
-15.7 (5.7)
-</td>
-<td style="text-align:left;">
 t(236) = -0.63
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.640
 </td>
 </tr>
@@ -4442,16 +5456,10 @@ t(236) = -0.63
 asis_centrality
 </td>
 <td style="text-align:left;">
-8.7 (3)
-</td>
-<td style="text-align:left;">
-9.3 (2.8)
-</td>
-<td style="text-align:left;">
 t(249) = -1.58
 </td>
-<td style="text-align:right;">
-0.205
+<td style="text-align:left;">
+0.206
 </td>
 </tr>
 <tr>
@@ -4459,15 +5467,9 @@ t(249) = -1.58
 asis_self_stereotyping
 </td>
 <td style="text-align:left;">
-9.8 (2.5)
-</td>
-<td style="text-align:left;">
-9.1 (2.4)
-</td>
-<td style="text-align:left;">
 t(248) = 2.39
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.049
 </td>
 </tr>
@@ -4476,15 +5478,9 @@ t(248) = 2.39
 asis_in_group_homogeneity
 </td>
 <td style="text-align:left;">
-9 (2.4)
+t(240) = 1.20
 </td>
 <td style="text-align:left;">
-8.6 (2.4)
-</td>
-<td style="text-align:left;">
-t(240) = 1.2
-</td>
-<td style="text-align:right;">
 0.338
 </td>
 </tr>
@@ -4493,15 +5489,9 @@ t(240) = 1.2
 asis_self_investment
 </td>
 <td style="text-align:left;">
-39.2 (10.2)
-</td>
-<td style="text-align:left;">
-39.8 (9.9)
-</td>
-<td style="text-align:left;">
 t(242) = -0.47
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.719
 </td>
 </tr>
@@ -4510,15 +5500,9 @@ t(242) = -0.47
 asis_self_definition
 </td>
 <td style="text-align:left;">
-18.8 (4.6)
-</td>
-<td style="text-align:left;">
-17.7 (4.5)
-</td>
-<td style="text-align:left;">
 t(246) = 1.93
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.116
 </td>
 </tr>
@@ -4527,15 +5511,9 @@ t(246) = 1.93
 asis_sum
 </td>
 <td style="text-align:left;">
-173.8 (41)
-</td>
-<td style="text-align:left;">
-172.2 (38.9)
-</td>
-<td style="text-align:left;">
 t(244) = 0.32
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.810
 </td>
 </tr>
@@ -4544,15 +5522,9 @@ t(244) = 0.32
 age_first_aware
 </td>
 <td style="text-align:left;">
-26.7 (10.8)
+t(239) = 5.80
 </td>
 <td style="text-align:left;">
-18.8 (10.9)
-</td>
-<td style="text-align:left;">
-t(239) = 5.8
-</td>
-<td style="text-align:right;">
 0.000
 </td>
 </tr>
@@ -4561,13 +5533,9 @@ t(239) = 5.8
 gender
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(2) = 24.63
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.000
 </td>
 </tr>
@@ -4576,13 +5544,9 @@ X2(2) = 24.63
 sexuality
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 0.31
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.677
 </td>
 </tr>
@@ -4591,13 +5555,9 @@ X2(1) = 0.31
 race_ethnicity_bin
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 0.31
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.677
 </td>
 </tr>
@@ -4606,13 +5566,9 @@ X2(1) = 0.31
 employment_employed
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 4.44
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.084
 </td>
 </tr>
@@ -4621,13 +5577,9 @@ X2(1) = 4.44
 employment_unemployed
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 6.19
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.037
 </td>
 </tr>
@@ -4636,14 +5588,10 @@ X2(1) = 6.19
 employment_student
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 3.14
 </td>
-<td style="text-align:right;">
-0.145
+<td style="text-align:left;">
+0.146
 </td>
 </tr>
 <tr>
@@ -4651,14 +5599,10 @@ X2(1) = 3.14
 employment_homemaker
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 4.79
 </td>
-<td style="text-align:right;">
-0.073
+<td style="text-align:left;">
+0.072
 </td>
 </tr>
 <tr>
@@ -4666,13 +5610,9 @@ X2(1) = 4.79
 employment_unable
 </td>
 <td style="text-align:left;">
+X2(1) = 0.00
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X2(1) = 0
-</td>
-<td style="text-align:right;">
 1.000
 </td>
 </tr>
@@ -4681,13 +5621,9 @@ X2(1) = 0
 raads_cutoff
 </td>
 <td style="text-align:left;">
+X2(1) = 0.00
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X2(1) = 0
-</td>
-<td style="text-align:right;">
 1.000
 </td>
 </tr>
@@ -4696,13 +5632,9 @@ X2(1) = 0
 disability
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(2) = 23.93
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.000
 </td>
 </tr>
@@ -4711,14 +5643,10 @@ X2(2) = 23.93
 support_current_mental_health
 </td>
 <td style="text-align:left;">
+X2(1) = 10.20
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X2(1) = 10.2
-</td>
-<td style="text-align:right;">
-0.004
+0.005
 </td>
 </tr>
 <tr>
@@ -4726,14 +5654,10 @@ X2(1) = 10.2
 support_current_functional
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 7.13
 </td>
-<td style="text-align:right;">
-0.024
+<td style="text-align:left;">
+0.023
 </td>
 </tr>
 <tr>
@@ -4741,14 +5665,10 @@ X2(1) = 7.13
 support_current_case_management
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 4.17
 </td>
-<td style="text-align:right;">
-0.092
+<td style="text-align:left;">
+0.093
 </td>
 </tr>
 <tr>
@@ -4756,13 +5676,9 @@ X2(1) = 4.17
 support_current_social
 </td>
 <td style="text-align:left;">
+X2(1) = 4.40
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X2(1) = 4.4
-</td>
-<td style="text-align:right;">
 0.084
 </td>
 </tr>
@@ -4771,13 +5687,9 @@ X2(1) = 4.4
 support_current_vocational
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 3.71
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.116
 </td>
 </tr>
@@ -4786,14 +5698,10 @@ X2(1) = 3.71
 support_current_health
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 2.52
 </td>
-<td style="text-align:right;">
-0.205
+<td style="text-align:left;">
+0.206
 </td>
 </tr>
 <tr>
@@ -4801,14 +5709,10 @@ X2(1) = 2.52
 support_past_mental_health
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 2.18
 </td>
-<td style="text-align:right;">
-0.232
+<td style="text-align:left;">
+0.233
 </td>
 </tr>
 <tr>
@@ -4816,13 +5720,9 @@ X2(1) = 2.18
 support_past_functional
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 7.82
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.017
 </td>
 </tr>
@@ -4831,13 +5731,9 @@ X2(1) = 7.82
 support_past_case_management
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 18.55
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.000
 </td>
 </tr>
@@ -4846,13 +5742,9 @@ X2(1) = 18.55
 support_past_social
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 19.84
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.000
 </td>
 </tr>
@@ -4861,13 +5753,9 @@ X2(1) = 19.84
 support_past_vocational
 </td>
 <td style="text-align:left;">
+X2(1) = 21.00
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X2(1) = 21
-</td>
-<td style="text-align:right;">
 0.000
 </td>
 </tr>
@@ -4876,14 +5764,10 @@ X2(1) = 21
 support_past_health
 </td>
 <td style="text-align:left;">
+X2(1) = 3.20
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X2(1) = 3.2
-</td>
-<td style="text-align:right;">
-0.144
+0.145
 </td>
 </tr>
 <tr>
@@ -4891,13 +5775,9 @@ X2(1) = 3.2
 support_need_mental_health
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 15.96
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.000
 </td>
 </tr>
@@ -4906,14 +5786,10 @@ X2(1) = 15.96
 support_need_functional
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 13.35
 </td>
-<td style="text-align:right;">
-0.000
+<td style="text-align:left;">
+0.001
 </td>
 </tr>
 <tr>
@@ -4921,14 +5797,10 @@ X2(1) = 13.35
 support_need_case_management
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 8.92
 </td>
-<td style="text-align:right;">
-0.011
+<td style="text-align:left;">
+0.010
 </td>
 </tr>
 <tr>
@@ -4936,14 +5808,10 @@ X2(1) = 8.92
 support_need_social
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 15.34
 </td>
-<td style="text-align:right;">
-0.000
+<td style="text-align:left;">
+0.001
 </td>
 </tr>
 <tr>
@@ -4951,14 +5819,10 @@ X2(1) = 15.34
 support_need_vocational
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 12.84
 </td>
-<td style="text-align:right;">
-0.000
+<td style="text-align:left;">
+0.002
 </td>
 </tr>
 <tr>
@@ -4966,13 +5830,9 @@ X2(1) = 12.84
 support_need_health
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 10.89
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.004
 </td>
 </tr>
@@ -4981,13 +5841,9 @@ X2(1) = 10.89
 autism_dis
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(2) = 14.18
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.004
 </td>
 </tr>
@@ -4996,13 +5852,9 @@ X2(2) = 14.18
 fam_dx
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 1.44
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.338
 </td>
 </tr>
@@ -5011,13 +5863,9 @@ X2(1) = 1.44
 famfriend_dx
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 0.76
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.485
 </td>
 </tr>
@@ -5026,14 +5874,10 @@ X2(1) = 0.76
 fam_id
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 0.14
 </td>
-<td style="text-align:right;">
-0.781
+<td style="text-align:left;">
+0.782
 </td>
 </tr>
 <tr>
@@ -5041,13 +5885,9 @@ X2(1) = 0.14
 famfriend_id
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 2.42
 </td>
-<td style="text-align:right;">
+<td style="text-align:left;">
 0.210
 </td>
 </tr>
@@ -5056,13 +5896,9 @@ X2(1) = 2.42
 friend_dx
 </td>
 <td style="text-align:left;">
+X2(1) = 0.00
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X2(1) = 0
-</td>
-<td style="text-align:right;">
 1.000
 </td>
 </tr>
@@ -5071,14 +5907,10 @@ X2(1) = 0
 friend_id
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
 X2(1) = 2.17
 </td>
-<td style="text-align:right;">
-0.232
+<td style="text-align:left;">
+0.233
 </td>
 </tr>
 <tr>
@@ -5086,13 +5918,9 @@ X2(1) = 2.17
 education_ord
 </td>
 <td style="text-align:left;">
+U = 8969.50
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-U = 8969.5
-</td>
-<td style="text-align:right;">
 0.337
 </td>
 </tr>
@@ -5101,13 +5929,9 @@ U = 8969.5
 speaking_now
 </td>
 <td style="text-align:left;">
+U = 6270.50
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-U = 6270.5
-</td>
-<td style="text-align:right;">
 0.869
 </td>
 </tr>
@@ -5116,22 +5940,20 @@ U = 6270.5
 speaking_child
 </td>
 <td style="text-align:left;">
+U = 4068.00
 </td>
 <td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-U = 4068
-</td>
-<td style="text-align:right;">
-0.357
+0.356
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-<div id="figures" class="section level3">
-<h3>Figures</h3>
-<p>Traits</p>
+</div>
+<div id="figures" class="section level1">
+<h1>Figures</h1>
+<div id="autistic-traits" class="section level2">
+<h2>Autistic Traits</h2>
 <pre class="r"><code>df %&gt;%
   select(response_id, self_id, starts_with(&quot;cati&quot;), raads_sum) %&gt;%
   pivot_longer(
@@ -5170,7 +5992,9 @@ U = 4068
        width = 8,
        height = 5,
        units = &quot;in&quot;)</code></pre>
-<p>Supports</p>
+</div>
+<div id="supports" class="section level2">
+<h2>Supports</h2>
 <pre class="r"><code>df %&gt;%
   select(response_id, self_id, starts_with(&quot;support&quot;), -ends_with(&quot;total&quot;)) %&gt;%
   pivot_longer(
@@ -5212,8 +6036,11 @@ U = 4068
        width = 8,
        height = 5,
        units = &quot;in&quot;)</code></pre>
-<p>PHQ-2</p>
-<pre class="r"><code>dep_id &lt;- df %&gt;%
+</div>
+<div id="psychosocial-outcomes" class="section level2">
+<h2>Psychosocial Outcomes</h2>
+<pre class="r"><code># Plotting PHQ-2
+dep_id &lt;- df %&gt;%
   filter(self_id == T) %&gt;%
   drop_na(phq_dep) %&gt;%
   pull(phq_dep)
@@ -5266,8 +6093,8 @@ dep_plot &lt;- dep_norm_to_plot %&gt;%
   scale_fill_discrete(name = &quot;Group&quot;) +
   ggtitle(&quot;Depression Symptom Severity by Group&quot;) +
   theme_classic()</code></pre>
-<p>GAD-2</p>
-<pre class="r"><code>anx_id &lt;- df %&gt;%
+<pre class="r"><code># Plotting GAD-2
+anx_id &lt;- df %&gt;%
   filter(self_id == T) %&gt;%
   drop_na(phq_anx) %&gt;%
   pull(phq_anx)
@@ -5320,8 +6147,8 @@ anx_plot &lt;- anx_norm_to_plot %&gt;%
   scale_fill_discrete(name = &quot;Group&quot;) +
   ggtitle(&quot;Anxiety Symptom Severity by Group&quot;) +
   theme_classic()</code></pre>
-<p>WEMWBS</p>
-<pre class="r"><code>wemwbs_id &lt;- df %&gt;%
+<pre class="r"><code># Plotting WEMWBS
+wemwbs_id &lt;- df %&gt;%
   filter(self_id == T) %&gt;%
   drop_na(wemwbs_sum) %&gt;%
   pull(wemwbs_sum)
@@ -5347,8 +6174,8 @@ wemwbs_plot &lt;- wemwbs_norm_to_plot %&gt;%
   scale_fill_discrete(name = &quot;Group&quot;) +
   ggtitle(&quot;Mental Well-Being by Group&quot;) +
   theme_classic()</code></pre>
-<p>Combined</p>
-<pre class="r"><code>combined_plot &lt;- 
+<pre class="r"><code># Combined plot
+combined_plot &lt;- 
   dep_plot +
   anx_plot + 
   wemwbs_plot +
@@ -5365,8 +6192,36 @@ combined_plot</code></pre>
        height = 7,
        units = &quot;in&quot;)</code></pre>
 </div>
-<div id="follow-up-outcomes-by-support-need" class="section level3">
-<h3>Follow-Up: Outcomes by Support Need</h3>
+</div>
+<div id="follow-up-analyses" class="section level1">
+<h1>Follow-Up Analyses</h1>
+<div id="frequency-of-any-support-need" class="section level2">
+<h2>Frequency of <em>any</em> support need</h2>
+<pre class="r"><code>df %&gt;%
+  mutate(
+    any_need = 
+      support_need_mental_health |
+      support_need_functional |
+      support_need_case_management |
+      support_need_social |
+      support_need_vocational |
+      support_need_health
+  ) %&gt;%
+  group_by(self_id) %&gt;%
+  count(any_need) %&gt;%
+  mutate(percent = percent(n / sum(n), .1))</code></pre>
+<pre><code>## # A tibble: 4 x 4
+## # Groups:   self_id [2]
+##   self_id any_need     n percent
+##   &lt;lgl&gt;   &lt;lgl&gt;    &lt;int&gt; &lt;chr&gt;  
+## 1 FALSE   FALSE       61 53.0%  
+## 2 FALSE   TRUE        54 47.0%  
+## 3 TRUE    FALSE       42 28.6%  
+## 4 TRUE    TRUE       105 71.4%</code></pre>
+</div>
+<div id="commonality-analysis-of-well-being-by-self-identification-and-support-need" class="section level2">
+<h2>Commonality Analysis of Well-Being by Self-Identification and
+Support Need</h2>
 <pre class="r"><code>library(yhat)
 
 lm(
@@ -5477,8 +6332,8 @@ self_id,support_need_total
 </tbody>
 </table>
 </div>
-<div id="equivalence-testing" class="section level3">
-<h3>Equivalence Testing</h3>
+<div id="equivalence-testing" class="section level2">
+<h2>Equivalence Testing</h2>
 <pre class="r"><code>eq_test &lt;- function(x) {
   
   id_mean = mean(df[[x]][df$self_id], na.rm = T)
@@ -5546,8 +6401,8 @@ eq_test(&quot;cati_sum&quot;)</code></pre>
 ## Hedges&#39;s g   0.1149 0.1247 [-0.0904, 0.3199]         0.9
 ## Note: SMD confidence intervals are an approximation. See vignette(&quot;SMD_calcs&quot;).</code></pre>
 </div>
-<div id="how-many-self-identifiers-want-a-diagnosis" class="section level3">
-<h3>How many self-identifiers want a diagnosis?</h3>
+<div id="how-many-self-identifiers-want-a-diagnosis" class="section level2">
+<h2>How many self-identifiers want a diagnosis?</h2>
 <p>With Wald confidence intervals (normal approximation) and Wilson for
 reference</p>
 <pre class="r"><code>df %&gt;%
@@ -5578,9 +6433,8 @@ reference</p>
 ## [3,] 0.24489796 0.18246266 0.3203266</code></pre>
 </div>
 </div>
-</div>
-<div id="code-frequencies" class="section level1">
-<h1>Code Frequencies</h1>
+<div id="content-analysis-code-frequencies" class="section level1">
+<h1>Content Analysis: Code Frequencies</h1>
 <pre class="r"><code># Q1
 df %&gt;%
   pivot_longer(
@@ -7496,28 +8350,6 @@ q5_subjective
 </tr>
 </tbody>
 </table>
-<p>Counting <em>any</em> support need</p>
-<pre class="r"><code>df %&gt;%
-  mutate(
-    any_need = 
-      support_need_mental_health |
-      support_need_functional |
-      support_need_case_management |
-      support_need_social |
-      support_need_vocational |
-      support_need_health
-  ) %&gt;%
-  group_by(self_id) %&gt;%
-  count(any_need) %&gt;%
-  mutate(percent = percent(n / sum(n), .1))</code></pre>
-<pre><code>## # A tibble: 4 x 4
-## # Groups:   self_id [2]
-##   self_id any_need     n percent
-##   &lt;lgl&gt;   &lt;lgl&gt;    &lt;int&gt; &lt;chr&gt;  
-## 1 FALSE   FALSE       61 53.0%  
-## 2 FALSE   TRUE        54 47.0%  
-## 3 TRUE    FALSE       42 28.6%  
-## 4 TRUE    TRUE       105 71.4%</code></pre>
 </div>
 
 

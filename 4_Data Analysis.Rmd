@@ -5,10 +5,7 @@ date: "2025-3-15"
 ---
 
 ```{r, include = F}
-knitr::opts_chunk$set(echo = TRUE)
-
-set.seed(857287)
-
+## Load packages
 library(tidyverse)
 library(infer)
 library(oddsratio)
@@ -22,6 +19,15 @@ library(patchwork)
 library(rlang)
 library(broom)
 `%+%` <- paste0
+
+## Load data
+df <- readRDS("H:\\My Drive\\Research\\Projects\\Autism Identification\\Data\\Analysis-Ready Data.rds")
+
+## Set seed for reproducibility
+set.seed(857287)
+
+## Set functions
+round <- function(x, digits = 0) sprintf("%." %+% digits %+% "f", x)
 
 get_d <- function(x) {
   
@@ -43,37 +49,30 @@ get_d <- function(x) {
   
 }
 
-df <- readRDS("H:\\My Drive\\Research\\Projects\\Autism Identification\\Data\\Analysis-Ready Data.rds")
-```
-
-# Appendix A: Detailed Sample Description
-
-```{r}
 n_percent <- function(n) n %+% " (" %+% percent(n / sum(n), .1) %+% ")"
+
 mean_sd <- function(x) round(mean(x, na.rm = T), 1) %+% " (" %+% round(sd(x, na.rm = T), 1) %+% ")"
 
 get_descriptive_count <- function(x) {
   
-  x_char <- as_name(enquo(x))
-  
   full_sample <- df %>%
-    count({{x}}) %>%
+    count(!!sym(x)) %>%
     drop_na() %>%
     mutate(full_sample = n_percent(n)) %>%
     select(-n)
   
   by_group <- df %>%
     group_by(self_id_char) %>%
-    count({{x}}) %>%
+    count(!!sym(x)) %>%
     drop_na() %>%
     mutate(by_group = n_percent(n)) %>%
-    pivot_wider(names_from = "self_id_char", values_from = "by_group", id_cols = all_of(x_char)) %>%
-    select({{x}}, `Self-Identifying`, Diagnosed)
+    pivot_wider(names_from = "self_id_char", values_from = "by_group", id_cols = all_of(x)) %>%
+    select(!!sym(x), `Self-Identifying`, Diagnosed)
   
   combined <- full_join(
     full_sample, 
     by_group, 
-    by = x_char,
+    by = x,
     relationship = "one-to-one"
   )
   
@@ -86,18 +85,16 @@ get_descriptive_count <- function(x) {
 
 get_descriptive_continuous <- function(x) {
   
-  x_char <- as_name(enquo(x))
-  
   full_sample <- df %>%
-    summarize(full_sample = mean_sd({{x}})) %>%
-    mutate(var = x_char) %>%
+    summarize(full_sample = mean_sd(!!sym(x))) %>%
+    mutate(var = x) %>%
     select(var, full_sample)
   
   by_group <- df %>%
     group_by(self_id_char) %>%
-    summarize(by_group = mean_sd({{x}})) %>%
+    summarize(by_group = mean_sd(!!sym(x))) %>%
     pivot_wider(names_from = "self_id_char", values_from = "by_group") %>%
-    mutate(var = x_char) %>%
+    mutate(var = x) %>%
     select(var, `Self-Identifying`, Diagnosed)
   
   combined <- full_join(
@@ -113,71 +110,61 @@ get_descriptive_continuous <- function(x) {
     return()
   
 }
+```
 
+# Appendix A: Detailed Sample Description
+
+```{r}
 # Diagnosis
-get_descriptive_count(self_id)
+get_descriptive_count("self_id")
 
 # Age
-get_descriptive_continuous(age)
+get_descriptive_continuous("age")
 
 # Gender
-get_descriptive_count(gender)
-get_descriptive_count(gender_3)
-get_descriptive_count(gender_4)
-get_descriptive_count(gender_5)
-get_descriptive_count(gender_6)
-get_descriptive_count(gender_7)
-get_descriptive_count(gender_8)
-get_descriptive_count(gender_9)
-get_descriptive_count(gender_10)
-get_descriptive_count(gender_12) # No values for 11 ("I don't know")
+get_descriptive_count("gender")
+get_descriptive_count("gender_3")
+get_descriptive_count("gender_4")
+get_descriptive_count("gender_5")
+get_descriptive_count("gender_6")
+get_descriptive_count("gender_7")
+get_descriptive_count("gender_8")
+get_descriptive_count("gender_9")
+get_descriptive_count("gender_10")
+get_descriptive_count("gender_12") # No values for 11 ("I don't know")
 
 # Sexuality
-get_descriptive_count(sexuality)
-get_descriptive_count(sexuality_2)
-get_descriptive_count(sexuality_3)
-get_descriptive_count(sexuality_4)
-get_descriptive_count(sexuality_5)
-get_descriptive_count(sexuality_6)
-get_descriptive_count(sexuality_7)
-get_descriptive_count(sexuality_8)
-get_descriptive_count(sexuality_9)
-get_descriptive_count(sexuality_10)
+get_descriptive_count("sexuality")
+get_descriptive_count("sexuality_2")
+get_descriptive_count("sexuality_3")
+get_descriptive_count("sexuality_4")
+get_descriptive_count("sexuality_5")
+get_descriptive_count("sexuality_6")
+get_descriptive_count("sexuality_7")
+get_descriptive_count("sexuality_8")
+get_descriptive_count("sexuality_9")
+get_descriptive_count("sexuality_10")
 
 # Race/ethnicity
-get_descriptive_count(race_ethnicity)
+get_descriptive_count("race_ethnicity")
 
 # Education
-get_descriptive_count(education)
+get_descriptive_count("education")
 
 # Employment
-get_descriptive_count(employment_employed)
-get_descriptive_count(employment_unemployed)
-get_descriptive_count(employment_student)
-get_descriptive_count(employment_retired)
-get_descriptive_count(employment_homemaker)
-get_descriptive_count(employment_unable)
+get_descriptive_count("employment_employed")
+get_descriptive_count("employment_unemployed")
+get_descriptive_count("employment_student")
+get_descriptive_count("employment_retired")
+get_descriptive_count("employment_homemaker")
+get_descriptive_count("employment_unable")
 ```
 
 # RQ 1: Who self-identifies as autistic without a formal diagnosis?
 
-```{r}
-rq1_out <- tibble()
-```
+## Descriptive Statistics
 
-## 1A. What demographic factors (age, gender, sexuality, race, employment, education) are associated with autism self-identification?
-
-## 1B. What autistic traits (social interaction, communication, social camouflage, cognitive rigidity, repetitive behaviors, sensory sensitivity, speech, RAADS-14 score) are associated with autism self-identification?
-
-## 1C. What psychosocial outcomes (depression, anxiety, disability, impairment, wellbeing, autism community belonging) are associated with autism self-identification?
-
-## 1D. What support needs (current/past/unmet need of various support services) are associated with autism self-identification?
-
-## 1E. What beliefs about autism (what defines “autism,” is it a disability) are associated with autism self-identification?
-
-## 1F. What other aspects of a person’s autistic experience (age first aware, having autistic family or friends) are associated with autism self-identification?
-
-### Tests of Continuous Outcomes
+### Continuous Outcomes
 
 ```{r, results = "asis"}
 # Pull names for continuous variables
@@ -194,36 +181,26 @@ continuous_outcomes <- df %>%
          age_first_aware) %>%
   names()
 
+# Print descriptives
+map(
+  .x = continuous_outcomes,
+  .f = get_descriptive_continuous
+)
+
 # Function to analyze continuous variables
 output_continuous <- function(x) {
-
-  # Calculate descriptive statistics
-  descriptive <- df %>%
-    group_by(self_id) %>%
-    summarize(
-      mean = mean(get(x), na.rm = T),
-      sd = sd(get(x), na.rm = T)
-    ) %>%
-    mutate(
-      output = round(mean, 1) %+% " (" %+% round(sd, 1) %+% ")"
-    )
 
   # Calculate test statistic
   test <- t_test(
     x = df,
     formula = as.formula(x %+% " ~ self_id"),
     order = c("TRUE", "FALSE") # Doesn't do anything important, but suppresses a warning
-  ) %>%
-    mutate(
-      output = "t(" %+% round(t_df) %+% ") = " %+% round(statistic, 2)
-    )
+  )
 
   # Format output
   out <- tibble(
-    self_id = descriptive$output[descriptive$self_id],
-    diagnosed = descriptive$output[!descriptive$self_id],
-    statistic = test$output,
-    p = round(test$p_value, 3)
+    statistic = "t(" %+% round(test$t_df) %+% ") = " %+% round(test$statistic, 2),
+    p = test$p_value
   )
 
   return(out)
@@ -239,7 +216,7 @@ rq1_continuous <- map(
   bind_rows(.id = "x") 
 ```
 
-### Tests of Nominal Outcomes
+### Nominal Outcomes
 
 ```{r, results = "asis"}
 # Pull names for nominal variables
@@ -256,46 +233,25 @@ nominal_outcomes <- df %>%
          starts_with("friend")) %>%
   names()
 
+# Print descriptives
+map(
+  .x = nominal_outcomes,
+  .f = get_descriptive_count
+)
+
 # Function to analyze nominal variables
 output_nominal <- function(x) {
-
-  # Print descriptive statistics
-  df %>%
-    group_by(self_id) %>%
-    count(!!x := get(x)) %>%
-    drop_na() %>%
-    mutate(
-      output = n %+% " (" %+% percent(n / sum(n), .1) %+% ")"
-    ) %>%
-    pivot_wider(
-      id_cols = x,
-      names_from = "self_id",
-      values_from = "output"
-    ) %>%
-    select(
-      x,
-      self_id = `TRUE`,
-      diagnosed = `FALSE`
-    ) %>%
-    kable() %>%
-    kable_styling() %>%
-    print()
-
+  
   # Calculate test statistic
   test <- chisq_test(
     x = df,
     formula = as.formula(x %+% " ~ self_id")
-  ) %>%
-    mutate(
-      output = "X2(" %+% round(chisq_df) %+% ") = " %+% round(statistic, 2)
-    )
+  )
 
   # Format output
   out <- tibble(
-    self_id = "",
-    diagnosed = "",
-    statistic = test$output,
-    p = round(test$p_value, 3)
+    statistic = "X2(" %+% round(test$chisq_df) %+% ") = " %+% round(test$statistic, 2),
+    p = test$p_value
   )
 
   return(out)
@@ -311,36 +267,20 @@ rq1_nominal <- map(
   bind_rows(.id = "x")
 ```
 
-### Tests of Ordinal Outcomes
+### Ordinal Outcomes
 
 ```{r, results = "asis"}
 # Pull names for ordinal variables
 ordinal_outcomes <- c("education_ord", "speaking_now", "speaking_child")
 
+# Print descriptives
+map(
+  .x = ordinal_outcomes,
+  .f = get_descriptive_count
+)
+
 # Function to analyze ordinal variables
 output_ordinal <- function(x) {
-
-  # Print descriptive statistics
-  df %>%
-    group_by(self_id) %>%
-    count(!!x := get(x)) %>%
-    drop_na() %>%
-    mutate(
-      output = n %+% " (" %+% percent(n / sum(n), .1) %+% ")"
-    ) %>%
-    pivot_wider(
-      id_cols = x,
-      names_from = "self_id",
-      values_from = "output"
-    ) %>%
-    select(
-      x,
-      self_id = `TRUE`,
-      diagnosed = `FALSE`
-    ) %>%
-    kable() %>%
-    kable_styling() %>%
-    print()
 
   # Calculate test statistic
   test <- wilcox.test(
@@ -350,16 +290,10 @@ output_ordinal <- function(x) {
     exact = F
   )
   
-  statistic <- "U = " %+% round(test$statistic, 2)
-  
-  p_value <- test$p.value
-
   # Format output
   out <- tibble(
-    self_id = "",
-    diagnosed = "",
-    statistic = statistic,
-    p = round(p_value, 3)
+    statistic = "U = " %+% round(test$statistic, 2),
+    p = test$p.value
   )
 
   return(out)
@@ -375,7 +309,7 @@ rq1_ordinal <- map(
   bind_rows(.id = "x")
 ```
 
-Adjust p-values
+## Test Statistics and Adjusted _p_-Values
 
 ```{r, results = "asis"}
 # Combine outputs
@@ -396,9 +330,9 @@ rq1_adjusted %>%
   kable_styling()
 ```
 
-### Figures
+# Figures
 
-Traits
+## Autistic Traits
 
 ```{r}
 df %>%
@@ -441,7 +375,7 @@ ggsave(filename = here("Figures", "Autistic Traits by Group.png"),
        units = "in")
 ```
 
-Supports
+## Supports
 
 ```{r}
 df %>%
@@ -487,9 +421,10 @@ ggsave(filename = here("Figures", "Supports by Group.png"),
        units = "in")
 ```
 
-PHQ-2
+## Psychosocial Outcomes
 
 ```{r}
+# Plotting PHQ-2
 dep_id <- df %>%
   filter(self_id == T) %>%
   drop_na(phq_dep) %>%
@@ -545,9 +480,8 @@ dep_plot <- dep_norm_to_plot %>%
   theme_classic()
 ```
 
-GAD-2
-
 ```{r}
+# Plotting GAD-2
 anx_id <- df %>%
   filter(self_id == T) %>%
   drop_na(phq_anx) %>%
@@ -603,9 +537,8 @@ anx_plot <- anx_norm_to_plot %>%
   theme_classic()
 ```
 
-WEMWBS
-
 ```{r}
+# Plotting WEMWBS
 wemwbs_id <- df %>%
   filter(self_id == T) %>%
   drop_na(wemwbs_sum) %>%
@@ -634,9 +567,8 @@ wemwbs_plot <- wemwbs_norm_to_plot %>%
   theme_classic()
 ```
 
-Combined
-
 ```{r}
+# Combined plot
 combined_plot <- 
   dep_plot +
   anx_plot + 
@@ -655,7 +587,27 @@ ggsave(plot = combined_plot,
        units = "in")
 ```
 
-### Follow-Up: Outcomes by Support Need
+# Follow-Up Analyses
+
+## Frequency of _any_ support need
+
+```{r}
+df %>%
+  mutate(
+    any_need = 
+      support_need_mental_health |
+      support_need_functional |
+      support_need_case_management |
+      support_need_social |
+      support_need_vocational |
+      support_need_health
+  ) %>%
+  group_by(self_id) %>%
+  count(any_need) %>%
+  mutate(percent = percent(n / sum(n), .1))
+```
+
+## Commonality Analysis of Well-Being by Self-Identification and Support Need
 
 ```{r}
 library(yhat)
@@ -683,7 +635,7 @@ commonality(
   kable_styling()
 ```
 
-### Equivalence Testing
+## Equivalence Testing
 
 ```{r}
 eq_test <- function(x) {
@@ -714,7 +666,7 @@ eq_test("cati_sum")
 eq_test("raads_sum")
 ```
 
-### How many self-identifiers want a diagnosis?
+## How many self-identifiers want a diagnosis?
 
 With Wald confidence intervals (normal approximation) and Wilson for reference
 
@@ -735,7 +687,7 @@ DescTools::MultinomCI(c(101, 10, 36), method = "wald")
 DescTools::MultinomCI(c(101, 10, 36), method = "wilson")
 ```
 
-# Code Frequencies
+# Content Analysis: Code Frequencies
 
 ```{r}
 # Q1
@@ -905,22 +857,4 @@ q5_comparison %>%
   mutate(p_adj = p.adjust(p_value, "BH")) %>%
   kable() %>%
   kable_styling()
-```
-
-Counting _any_ support need
-
-```{r}
-df %>%
-  mutate(
-    any_need = 
-      support_need_mental_health |
-      support_need_functional |
-      support_need_case_management |
-      support_need_social |
-      support_need_vocational |
-      support_need_health
-  ) %>%
-  group_by(self_id) %>%
-  count(any_need) %>%
-  mutate(percent = percent(n / sum(n), .1))
 ```
