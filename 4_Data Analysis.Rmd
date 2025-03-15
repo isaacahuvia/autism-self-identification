@@ -212,7 +212,7 @@ output_continuous <- function(x) {
   test <- t_test(
     x = df,
     formula = as.formula(x %+% " ~ self_id"),
-    order = c("TRUE", "FALSE") # Doesn't do anything important, but supresses a warning
+    order = c("TRUE", "FALSE") # Doesn't do anything important, but suppresses a warning
   ) %>%
     mutate(
       output = "t(" %+% round(t_df) %+% ") = " %+% round(statistic, 2)
