@@ -42,6 +42,24 @@ age_first_aware_recoding <- read.csv("H:\\My Drive\\Research\\Projects\\Autism I
 
 
 ####  Clean Data  ####
+# Manually correct "problems" in speaking variables
+# fetch_survey() expects a trailing space for some levels and therefore sets them
+# as NA. Luckily, parse_factor() tells us when and where this happens so we can correct
+# This has to be done before filtering steps because it relies on row indexes in the raw data
+for(x in c("speaking_child", "speaking_child_AAC", "speaking_now", "speaking_now_AAC")) {
+  
+  levels(raw_data[[x]]) <- trimws(levels(raw_data[[x]]))
+  
+  problems <- problems(raw_data[[x]])
+  
+  raw_data[[x]][problems$row] <- problems$actual
+  
+  print(x)
+  print(levels(raw_data[[x]]))
+  print(table(raw_data[[x]]))
+  
+}
+
 ## Filter responses
 # Check rows in raw data
 nrow(raw_data)
@@ -96,24 +114,6 @@ nrow(high_attention_respondents)
 
 
 ## Recode variables
-# Manually correct "problems" in speaking variables
-# fetch_survey() expects a trailing space for some levels and therefore sets them
-# as NA. Luckily, parse_factor() tells us when and where this happens so we can correct
-for(x in c("speaking_child", "speaking_child_AAC", "speaking_now", "speaking_now_AAC")) {
-  
-  levels(raw_data[[x]]) <- trimws(levels(raw_data[[x]]))
-  
-  problems <- problems(raw_data[[x]])
-  
-  raw_data[[x]][problems$row] <- problems$actual
-  
-  print(x)
-  print(levels(raw_data[[x]]))
-  print(table(raw_data[[x]]))
-  
-}
-
-# Recode remaining variables
 recoded_data <- high_attention_respondents %>%
   
   left_join(age_first_aware_recoding, by = "aware_when") %>%
