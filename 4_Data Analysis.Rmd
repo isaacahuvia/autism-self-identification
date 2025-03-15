@@ -1,7 +1,7 @@
 ---
-title: "RQ 1"
+title: "Analysis"
 output: html_document
-date: "2023-12-06"
+date: "2024-11-25"
 ---
 
 ```{r, include = F}
@@ -10,12 +10,17 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(857287)
 
 library(tidyverse)
+library(infer)
 library(oddsratio)
 library(scales)
 library(knitr)
 library(kableExtra)
 library(here)
+library(yhat)
 library(MOTE)
+library(patchwork)
+library(rlang)
+library(broom)
 `%+%` <- paste0
 
 get_d <- function(x) {
@@ -39,107 +44,126 @@ get_d <- function(x) {
 }
 
 df <- readRDS("H:\\My Drive\\Research\\Projects\\Autism Identification\\Data\\Analysis-Ready Data.rds")
-
-p_values <- tibble()
-
-## Recode variables as needed for pre-registered analyses
-# Race/ethnicity
-df$race_ethnicity_recoded = df$race_ethnicity == "White non-Hispanic"
-
-# Education
-df$education_recoded <- case_when(
-  df$education %in% c("Less than a high school diploma", "High school degree or equivalent (e.g., GED, modified diploma, certificate of completion)") ~ 1,
-  df$education == "Some college" ~ 2,
-  df$education == "Associate degree (e.g., AA, AS)" ~ 3,
-  df$education == "Bachelor’s degree (e.g., BA, BS)" ~ 4,
-  df$education %in% c("Master’s degree (e.g., MA, MS)", "Professional or doctorate degree (e.g., MD, DDS, DVM, PhD, EdD, PsyD)") ~ 5,
-  df$education == "Other:" ~ NA_real_
-)
-
-# Disability
-df$disability <- as.character(df$disability)
-df$disability[df$disability == "Prefer not to say"] <- NA
-
-# Autism as disability
-df$autism_dis <- as.character(df$autism_dis)
 ```
 
-# Sample Description
+# Appendix A: Detailed Sample Description
 
 ```{r}
+n_percent <- function(n) n %+% " (" %+% percent(n / sum(n), .1) %+% ")"
+mean_sd <- function(x) round(mean(x, na.rm = T), 1) %+% " (" %+% round(sd(x, na.rm = T), 1) %+% ")"
+
+get_descriptive_count <- function(x) {
+  
+  x_char <- as_name(enquo(x))
+  
+  full_sample <- df %>%
+    count({{x}}) %>%
+    drop_na() %>%
+    mutate(full_sample = n_percent(n)) %>%
+    select(-n)
+  
+  by_group <- df %>%
+    group_by(self_id_char) %>%
+    count({{x}}) %>%
+    drop_na() %>%
+    mutate(by_group = n_percent(n)) %>%
+    pivot_wider(names_from = "self_id_char", values_from = "by_group", id_cols = all_of(x_char)) %>%
+    select({{x}}, `Self-Identifying`, Diagnosed)
+  
+  combined <- full_join(
+    full_sample, 
+    by_group, 
+    by = x_char,
+    relationship = "one-to-one"
+  )
+  
+  combined %>%
+    kable() %>%
+    kable_styling() %>%
+    return()
+
+}
+
+get_descriptive_continuous <- function(x) {
+  
+  x_char <- as_name(enquo(x))
+  
+  full_sample <- df %>%
+    summarize(full_sample = mean_sd({{x}})) %>%
+    mutate(var = x_char) %>%
+    select(var, full_sample)
+  
+  by_group <- df %>%
+    group_by(self_id_char) %>%
+    summarize(by_group = mean_sd({{x}})) %>%
+    pivot_wider(names_from = "self_id_char", values_from = "by_group") %>%
+    mutate(var = x_char) %>%
+    select(var, `Self-Identifying`, Diagnosed)
+  
+  combined <- full_join(
+    full_sample, 
+    by_group, 
+    by = "var",
+    relationship = "one-to-one"
+  )
+  
+  combined %>%
+    kable() %>%
+    kable_styling() %>%
+    return()
+  
+}
+
 # Diagnosis
-df %>%
-  count(self_id) %>%
-  mutate(percent = percent(n / sum(n), .1)) %>%
-  kable() %>%
-  kable_styling()
+get_descriptive_count(self_id)
 
 # Age
-df %>%
-  summarize(mean = mean(age, na.rm = T),
-            sd = sd(age, na.rm = T)) %>%
-  kable() %>%
-  kable_styling()
+get_descriptive_continuous(age)
 
 # Gender
-df %>%
-  count(gender) %>%
-  mutate(percent = percent(n / sum(n), .1)) %>%
-  kable() %>%
-  kable_styling()
-
-# TGD gender breakdown
-df %>%
-  pivot_longer(matches("gender_[0-9]*$")) %>%
-  count(value) %>%
-  mutate(percent = percent(n / nrow(df), .1)) %>%
-  arrange(desc(n)) %>%
-  kable() %>%
-  kable_styling()
+get_descriptive_count(gender)
+get_descriptive_count(gender_3)
+get_descriptive_count(gender_4)
+get_descriptive_count(gender_5)
+get_descriptive_count(gender_6)
+get_descriptive_count(gender_7)
+get_descriptive_count(gender_8)
+get_descriptive_count(gender_9)
+get_descriptive_count(gender_10)
+get_descriptive_count(gender_12) # No values for 11 ("I don't know")
 
 # Sexuality
-df %>%
-  count(sexuality) %>%
-  mutate(percent = percent(n / sum(n), .1)) %>%
-  kable() %>%
-  kable_styling()
-
-# LGBQ+ breakdown
-df %>%
-  pivot_longer(matches("sexuality_[0-9]*$")) %>%
-  count(value) %>%
-  mutate(percent = percent(n / nrow(df), .1)) %>%
-  arrange(desc(n)) %>%
-  kable() %>%
-  kable_styling()
+get_descriptive_count(sexuality)
+get_descriptive_count(sexuality_2)
+get_descriptive_count(sexuality_3)
+get_descriptive_count(sexuality_4)
+get_descriptive_count(sexuality_5)
+get_descriptive_count(sexuality_6)
+get_descriptive_count(sexuality_7)
+get_descriptive_count(sexuality_8)
+get_descriptive_count(sexuality_9)
+get_descriptive_count(sexuality_10)
 
 # Race/ethnicity
-df %>%
-  count(race_ethnicity) %>%
-  mutate(percent = percent(n / sum(n), .1)) %>%
-  arrange(desc(n)) %>%
-  kable() %>%
-  kable_styling()
+get_descriptive_count(race_ethnicity)
 
 # Education
-df %>%
-  count(education) %>%
-  mutate(percent = percent(n / sum(n), .1)) %>%
-  kable() %>%
-  kable_styling()
+get_descriptive_count(education)
 
 # Employment
-df %>% 
-  pivot_longer(starts_with("employment")) %>%
-  group_by(name) %>%
-  summarize(n = sum(value),
-            percent = percent(n / nrow(df), .1)) %>%
-  arrange(desc(n)) %>%
-  kable() %>%
-  kable_styling()
+get_descriptive_count(employment_employed)
+get_descriptive_count(employment_unemployed)
+get_descriptive_count(employment_student)
+get_descriptive_count(employment_retired)
+get_descriptive_count(employment_homemaker)
+get_descriptive_count(employment_unable)
 ```
 
 # RQ 1: Who self-identifies as autistic without a formal diagnosis?
+
+```{r}
+rq1_out <- tibble()
+```
 
 ## 1A. What demographic factors (age, gender, sexuality, race, employment, education) are associated with autism self-identification?
 
@@ -156,6 +180,7 @@ df %>%
 ### Tests of Continuous Outcomes
 
 ```{r, results = "asis"}
+# Pull names for continuous variables
 continuous_outcomes <- df %>%
   select(age,
          starts_with("cati"),
@@ -169,130 +194,204 @@ continuous_outcomes <- df %>%
          age_first_aware) %>%
   names()
 
-for(x in continuous_outcomes) {
-  
-  print(x)
-  
-  # Descriptive statistics
-  df %>%
+# Function to analyze continuous variables
+output_continuous <- function(x) {
+
+  # Calculate descriptive statistics
+  descriptive <- df %>%
     group_by(self_id) %>%
-    summarize(mean = mean(get(x), na.rm = T),
-              sd = sd(get(x), na.rm = T)) %>%
-    kable(caption = x) %>%
-    kable_styling() %>%
-    print()
-  
-  # Effect size
-  get_d(x) %>%
-    print()
-  
-  # Test
-  x_by_id <- t.test(
-    df[[x]] ~ df$self_id
-  )
-  
-  statistic <- "t(" %+% round(x_by_id$parameter) %+% ") = " %+% round(x_by_id$statistic, 2)
-  
-  p_value <- x_by_id$p.value
-  
+    summarize(
+      mean = mean(get(x), na.rm = T),
+      sd = sd(get(x), na.rm = T)
+    ) %>%
+    mutate(
+      output = round(mean, 1) %+% " (" %+% round(sd, 1) %+% ")"
+    )
+
+  # Calculate test statistic
+  test <- t_test(
+    x = df,
+    formula = as.formula(x %+% " ~ self_id"),
+    order = c("TRUE", "FALSE") # Doesn't do anything important, but supresses a warning
+  ) %>%
+    mutate(
+      output = "t(" %+% round(t_df) %+% ") = " %+% round(statistic, 2)
+    )
+
+  # Format output
   out <- tibble(
-    name = x,
-    statistic = statistic,
-    p_value = p_value
+    self_id = descriptive$output[descriptive$self_id],
+    diagnosed = descriptive$output[!descriptive$self_id],
+    statistic = test$output,
+    p = round(test$p_value, 3)
   )
-  
-  p_values <- bind_rows(p_values, out)
+
+  return(out)
   
 }
+
+# Analyze continuous outcomes
+rq1_continuous <- map(
+  .x = continuous_outcomes,
+  .f = output_continuous
+) %>%
+  set_names(continuous_outcomes) %>%
+  bind_rows(.id = "x") 
 ```
 
 ### Tests of Nominal Outcomes
 
 ```{r, results = "asis"}
+# Pull names for nominal variables
 nominal_outcomes <- df %>%
   select(gender, 
          sexuality, 
-         race_ethnicity_recoded,
-         employment_employed, employment_unemployed, employment_unable,
+         race_ethnicity_bin,
+         starts_with("employment"), -employment_retired, # Expecteds too low for _retired
          raads_cutoff, 
-         disability, disability_autism,
+         disability,
          support_current_mental_health:support_need_health,
          autism_dis, 
          starts_with("fam"),
          starts_with("friend")) %>%
   names()
 
-for(x in nominal_outcomes) {
-  
-  # Descriptive statistics
+# Function to analyze nominal variables
+output_nominal <- function(x) {
+
+  # Print descriptive statistics
   df %>%
     group_by(self_id) %>%
-    count(get(x)) %>%
+    count(!!x := get(x)) %>%
     drop_na() %>%
-    mutate(percent = percent(n / sum(n), .1)) %>%
-    kable(caption = x) %>%
+    mutate(
+      output = n %+% " (" %+% percent(n / sum(n), .1) %+% ")"
+    ) %>%
+    pivot_wider(
+      id_cols = x,
+      names_from = "self_id",
+      values_from = "output"
+    ) %>%
+    select(
+      x,
+      self_id = `TRUE`,
+      diagnosed = `FALSE`
+    ) %>%
+    kable() %>%
     kable_styling() %>%
     print()
-  
-  # Test
-  x_by_id <- chisq.test(table(df$self_id, as.character(df[[x]])))
-  
-  statistic <- "X^2(" %+% round(x_by_id$parameter) %+% ") = " %+% round(x_by_id$statistic, 2)
-  
-  p_value <- x_by_id$p.value
-  
-  out <- tibble(
-    name = x,
-    statistic = statistic,
-    p_value = p_value
-  )
-  
-  p_values <- bind_rows(p_values, out)
 
+  # Calculate test statistic
+  test <- chisq_test(
+    x = df,
+    formula = as.formula(x %+% " ~ self_id")
+  ) %>%
+    mutate(
+      output = "X2(" %+% round(chisq_df) %+% ") = " %+% round(statistic, 2)
+    )
+
+  # Format output
+  out <- tibble(
+    self_id = "",
+    diagnosed = "",
+    statistic = test$output,
+    p = round(test$p_value, 3)
+  )
+
+  return(out)
+  
 }
+
+# Analyze nominal outcomes
+rq1_nominal <- map(
+  .x = nominal_outcomes,
+  .f = output_nominal
+) %>%
+  set_names(nominal_outcomes) %>%
+  bind_rows(.id = "x")
 ```
 
 ### Tests of Ordinal Outcomes
 
 ```{r, results = "asis"}
-ordinal_outcomes <- c("education_recoded", "speaking_now", "speaking_child")
+# Pull names for ordinal variables
+ordinal_outcomes <- c("education_ord", "speaking_now", "speaking_child")
 
-for(x in ordinal_outcomes) {
-  
-  # Descriptive statistics
+# Function to analyze ordinal variables
+output_ordinal <- function(x) {
+
+  # Print descriptive statistics
   df %>%
     group_by(self_id) %>%
-    count(get(x)) %>%
+    count(!!x := get(x)) %>%
     drop_na() %>%
-    mutate(percent = percent(n / sum(n), .1)) %>%
-    kable(caption = x) %>%
+    mutate(
+      output = n %+% " (" %+% percent(n / sum(n), .1) %+% ")"
+    ) %>%
+    pivot_wider(
+      id_cols = x,
+      names_from = "self_id",
+      values_from = "output"
+    ) %>%
+    select(
+      x,
+      self_id = `TRUE`,
+      diagnosed = `FALSE`
+    ) %>%
+    kable() %>%
     kable_styling() %>%
     print()
-  
-  # Test
-  x_by_id <- wilcox.test(as.numeric(df[[x]]) ~ df$self_id, na.rm = T, paired = F, exact = F)
-  
-  statistic <- "U = " %+% round(x_by_id$statistic, 2)
-  
-  p_value <- x_by_id$p.value
-  
-  out <- tibble(
-    name = x,
-    statistic = statistic,
-    p_value = p_value
+
+  # Calculate test statistic
+  test <- wilcox.test(
+    as.numeric(df[[x]]) ~ df$self_id, 
+    na.rm = T, 
+    paired = F, 
+    exact = F
   )
   
-  p_values <- bind_rows(p_values, out)
+  statistic <- "U = " %+% round(test$statistic, 2)
+  
+  p_value <- test$p.value
 
+  # Format output
+  out <- tibble(
+    self_id = "",
+    diagnosed = "",
+    statistic = statistic,
+    p = round(p_value, 3)
+  )
+
+  return(out)
+  
 }
+
+# Analyze ordinal outcomes
+rq1_ordinal <- map(
+  .x = ordinal_outcomes,
+  .f = output_ordinal
+) %>%
+  set_names(ordinal_outcomes) %>%
+  bind_rows(.id = "x")
 ```
 
-### Test Results
+Adjust p-values
 
-```{r}
-p_values$p_adj <- p.adjust(p_values$p_value, "BH")
+```{r, results = "asis"}
+# Combine outputs
+rq1 <- bind_rows(
+  rq1_continuous,
+  rq1_nominal,
+  rq1_ordinal
+)
 
-p_values %>% 
+# Adjust p-values
+rq1_adjusted <- rq1 %>%
+  mutate(p.adj = round(p.adjust(p, "BH"), 3)) %>%
+  select(-p)
+
+# Print
+rq1_adjusted %>%
   kable() %>%
   kable_styling()
 ```
@@ -352,16 +451,16 @@ df %>%
   ) %>%
   group_by(self_id, name) %>%
   summarize(prop = mean(value),
-            se = sd(value) / sqrt(n()),
+            se = sqrt((prop * (1 - prop)) / n()),
             .groups = "drop") %>%
   mutate(ci_high = prop + (1.96 * se),
          ci_low = prop - (1.96 * se),
          vartype = case_when(
            grepl("current", name) ~ "Current",
            grepl("past", name) ~ "Past",
-           grepl("need", name) ~ "Need"
+           grepl("need", name) ~ "Unmet Need"
          ) %>%
-           factor(levels = c("Past", "Current", "Need")),
+           factor(levels = c("Past", "Current", "Unmet Need")),
          support = name %>%
            gsub("^([^_]*_){2}", "", .) %>%
            recode_factor(
@@ -430,11 +529,13 @@ dep_norm <- dep_norm %>%
 
 dep_norm_temp <- rep(dep_norm$phq_dep, dep_norm$n)
 
-bind_rows(
+dep_norm_to_plot <- bind_rows(
   tibble(group = "Autistic: Diagnosed", phq_dep = dep_dx), 
   tibble(group = "Autistic: Self-Identify", phq_dep = dep_id),
   tibble(group = "General Population", phq_dep = dep_norm_temp)
-) %>%
+) 
+
+dep_plot <- dep_norm_to_plot %>%
   ggplot() +
   geom_density(aes(phq_dep, group = group, fill = group), alpha = .25, bw = 1) +
   scale_x_continuous(name = "PHQ-2 Sum Score") +
@@ -442,11 +543,6 @@ bind_rows(
   scale_fill_discrete(name = "Group") +
   ggtitle("Depression Symptom Severity by Group") +
   theme_classic()
-
-ggsave(filename = here("Figures", "Depression by Group.png"),
-       width = 6,
-       height = 4,
-       units = "in")
 ```
 
 GAD-2
@@ -491,11 +587,13 @@ anx_norm <- anx_norm %>%
 
 anx_norm_temp <- rep(anx_norm$phq_anx, anx_norm$n)
 
-bind_rows(
+anx_norm_to_plot <- bind_rows(
   tibble(group = "Autistic: Diagnosed", phq_anx = anx_dx), 
   tibble(group = "Autistic: Self-Identify", phq_anx = anx_id),
   tibble(group = "General Population", phq_anx = anx_norm_temp)
-) %>%
+)
+
+anx_plot <- anx_norm_to_plot %>%
   ggplot() +
   geom_density(aes(phq_anx, group = group, fill = group), alpha = .25, bw = 1) +
   scale_x_continuous(name = "GAD-2 Sum Score") +
@@ -503,11 +601,6 @@ bind_rows(
   scale_fill_discrete(name = "Group") +
   ggtitle("Anxiety Symptom Severity by Group") +
   theme_classic()
-
-ggsave(filename = here("Figures", "Anxiety by Group.png"),
-       width = 6,
-       height = 4,
-       units = "in")
 ```
 
 WEMWBS
@@ -523,24 +616,42 @@ wemwbs_dx <- df %>%
   drop_na(wemwbs_sum) %>%
   pull(wemwbs_sum)
 
-wemwbs_norm <- rnorm(1000, 51.607, 8.706)
+wemwbs_norm <- rnorm(1000, 48.9, 9.8)
 
-bind_rows(
+wemwbs_norm_to_plot <- bind_rows(
   tibble(group = "Autistic: Diagnosed", wemwbs = wemwbs_dx), 
   tibble(group = "Autistic: Self-Identify", wemwbs = wemwbs_id),
   tibble(group = "General Population", wemwbs = wemwbs_norm)
-) %>%
+) 
+
+wemwbs_plot <- wemwbs_norm_to_plot %>%
   ggplot() +
   geom_density(aes(wemwbs, group = group, fill = group), alpha = .25, bw = 5) +
   scale_x_continuous(name = "WEMWBS Sum Score") +
   scale_y_continuous(name = "Density", labels = scales::percent) +
   scale_fill_discrete(name = "Group") +
-  ggtitle("Well-Being by Group") +
+  ggtitle("Mental Well-Being by Group") +
   theme_classic()
+```
 
-ggsave(filename = here("Figures", "Well-Being by Group.png"),
-       width = 6,
-       height = 4,
+Combined
+
+```{r}
+combined_plot <- 
+  dep_plot +
+  anx_plot + 
+  wemwbs_plot +
+  plot_layout(
+    ncol = 1,
+    guides = "collect"
+  )
+
+combined_plot
+
+ggsave(plot = combined_plot, 
+       filename = here("Figures", "Psychological Outcome Distributions Group.png"),
+       width = 5.5,
+       height = 7,
        units = "in")
 ```
 
@@ -549,30 +660,6 @@ ggsave(filename = here("Figures", "Well-Being by Group.png"),
 ```{r}
 library(yhat)
 
-# Anxiety
-lm(
-  data = df,
-  formula = phq_anx ~ self_id
-) %>%
-  summary()
-
-lm(
-  data = df,
-  formula = phq_anx ~ self_id + support_need_total
-) %>%
-  summary()
-
-commonality(
-  aps(
-    dataMatrix = df,
-    dv = "phq_anx",
-    ivlist = c("self_id", "support_need_total")
-  )
-) %>%
-  kable() %>%
-  kable_styling()
-
-# Wellbeing
 lm(
   data = df,
   formula = wemwbs_sum ~ self_id
@@ -599,15 +686,241 @@ commonality(
 ### Equivalence Testing
 
 ```{r}
-# MOTE::d.ind.t(m1 = id_mean, m2 = dx_mean, sd1 = id_sd, sd2 = dx_sd, n1 = sum(df$self_id), n2 = sum(!df$self_id))
-# 
-# TOSTER::tsum_TOST(m1 = id_mean, m2 = dx_mean, sd1 = id_sd, sd2 = dx_sd, n1 = sum(df$self_id), n2 = sum(!df$self_id),
-#                   hypothesis = "EQU",
-#                   paired = F,
-#                   var.equal = F,
-#                   eqb = .3,
-#                   alpha = .025, #The only difference between this and the MOTE version is this uses two one-tailed tests, and so relies on a 90% CI if the alpha = .05
-#                   eqbound_type = "SMD")
+eq_test <- function(x) {
+  
+  id_mean = mean(df[[x]][df$self_id], na.rm = T)
+  dx_mean = mean(df[[x]][!df$self_id], na.rm = T)
+  
+  id_sd = sd(df[[x]][df$self_id], na.rm = T)
+  dx_sd = sd(df[[x]][!df$self_id], na.rm = T)
+  
+  id_n = sum(!is.na(df[[x]][df$self_id]))
+  dx_n = sum(!is.na(df[[x]][!df$self_id]))
+  
+  # This is the same as looking at the 90% CI and seeing if it overlaps a given bound...
+  TOSTER::tsum_TOST(
+    m1 = id_mean, m2 = dx_mean, sd1 = id_sd, sd2 = dx_sd, n1 = id_n, n2 = dx_n,
+    hypothesis = "EQU",
+    paired = F,
+    var.equal = T,
+    eqb = .3,
+    alpha = .05, # This doesn't affect the test, only the provided CI
+    eqbound_type = "SMD"
+  )
+  
+}
 
+eq_test("cati_sum")
+eq_test("raads_sum")
+```
 
+### How many self-identifiers want a diagnosis?
+
+With Wald confidence intervals (normal approximation) and Wilson for reference
+
+```{r}
+df %>%
+  filter(self_id) %>%
+  count(nodx_want) %>%
+  mutate(
+    prop = n / sum(n),
+    total_n = sum(n),
+    se = sqrt((prop * (1 - prop)) / total_n),
+    ci_high = prop + (1.96 * se),
+    ci_low = prop - (1.96 * se)
+  )
+
+DescTools::MultinomCI(c(101, 10, 36), method = "wald")
+
+DescTools::MultinomCI(c(101, 10, 36), method = "wilson")
+```
+
+# Code Frequencies
+
+```{r}
+# Q1
+df %>%
+  pivot_longer(
+    cols = starts_with("q1")
+  ) %>%
+  group_by(name) %>%
+  summarize(
+    n = sum(value, na.rm = T),
+    pct = percent(mean(value, na.rm = T))
+  ) %>%
+  kable() %>%
+  kable_styling()
+
+# Q2
+df %>%
+  pivot_longer(
+    cols = starts_with("q2")
+  ) %>%
+  group_by(name) %>%
+  summarize(
+    n = sum(value, na.rm = T),
+    pct = percent(mean(value, na.rm = T))
+  ) %>%
+  kable() %>%
+  kable_styling()
+
+# Q3
+df %>%
+  mutate(
+    q3_healthcare_parent = q3_healthcare_professionals | q3_healthcare_other
+  ) %>%
+  pivot_longer(
+    cols = starts_with("q3")
+  ) %>%
+  group_by(name) %>%
+  summarize(
+    n = sum(value, na.rm = T),
+    pct = percent(mean(value, na.rm = T))
+  ) %>%
+  kable() %>%
+  kable_styling()
+
+# Q4
+df %>%
+  pivot_longer(
+    cols = starts_with("q4")
+  ) %>%
+  group_by(name) %>%
+  summarize(
+    n = sum(value, na.rm = T),
+    pct = percent(mean(value, na.rm = T))
+  ) %>%
+  kable() %>%
+  kable_styling()
+
+# By group
+q4_cols <- df %>%
+  select(starts_with("q4")) %>%
+  names()
+
+q4_comparison <- tibble()
+
+for(x in q4_cols) {
+  
+  table <- table(df$self_id, df[[x]])
+  
+  sum_self_id <- sum(df[[x]][df$self_id], na.rm = T)
+  mean_self_id <- percent(mean(df[[x]][df$self_id], na.rm = T))
+  
+  sum_dx <- sum(df[[x]][!df$self_id], na.rm = T)
+  mean_dx <- percent(mean(df[[x]][!df$self_id], na.rm = T))
+
+  chisq <- chisq.test(table)
+  
+  expected <- chisq$expected
+  
+  if(min(expected) >= 5) {
+    
+    statistic <- chisq$statistic
+    p_value <- chisq$p.value
+    
+  } else {
+    
+    statistic <- NA
+    p_value <- NA
+    
+  }
+  
+  new_row <- tibble(
+    var = x,
+    self_id = sum_self_id %+% " (" %+% mean_self_id %+% ")",
+    dx = sum_dx %+% " (" %+% mean_dx %+% ")",
+    statistic = statistic,
+    p_value = p_value
+  )
+  
+  q4_comparison <- bind_rows(q4_comparison, new_row)
+  
+}
+
+q4_comparison %>%
+  mutate(p_adj = p.adjust(p_value, "BH")) %>%
+  kable() %>%
+  kable_styling()
+
+# Q5
+df %>%
+  pivot_longer(
+    cols = starts_with("q5")
+  ) %>%
+  group_by(name) %>%
+  summarize(
+    n = sum(value, na.rm = T),
+    pct = percent(mean(value, na.rm = T))
+  ) %>%
+  kable() %>%
+  kable_styling()
+
+# By group
+q5_cols <- df %>%
+  select(starts_with("q5")) %>%
+  names()
+
+q5_comparison <- tibble()
+
+for(x in q5_cols) {
+  
+  table <- table(df$self_id, df[[x]])
+  
+  sum_self_id <- sum(df[[x]][df$self_id], na.rm = T)
+  mean_self_id <- percent(mean(df[[x]][df$self_id], na.rm = T))
+  
+  sum_dx <- sum(df[[x]][!df$self_id], na.rm = T)
+  mean_dx <- percent(mean(df[[x]][!df$self_id], na.rm = T))
+
+  chisq <- chisq.test(table)
+  
+  expected <- chisq$expected
+  
+  if(min(expected) >= 5) {
+    
+    statistic <- chisq$statistic
+    p_value <- chisq$p.value
+    
+  } else {
+    
+    statistic <- NA
+    p_value <- NA
+    
+  }
+  
+  new_row <- tibble(
+    var = x,
+    self_id = sum_self_id %+% " (" %+% mean_self_id %+% ")",
+    dx = sum_dx %+% " (" %+% mean_dx %+% ")",
+    statistic = statistic,
+    p_value = p_value
+  )
+  
+  q5_comparison <- bind_rows(q5_comparison, new_row)
+  
+}
+
+q5_comparison %>%
+  mutate(p_adj = p.adjust(p_value, "BH")) %>%
+  kable() %>%
+  kable_styling()
+```
+
+Counting _any_ support need
+
+```{r}
+df %>%
+  mutate(
+    any_need = 
+      support_need_mental_health |
+      support_need_functional |
+      support_need_case_management |
+      support_need_social |
+      support_need_vocational |
+      support_need_health
+  ) %>%
+  group_by(self_id) %>%
+  count(any_need) %>%
+  mutate(percent = percent(n / sum(n), .1))
 ```
