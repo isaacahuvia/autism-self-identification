@@ -12,17 +12,11 @@ library(scales)
 calculate_reliability <- function(df1, df2, codes) {
   
   if(
-    all(names(df1) != names(df2)) |
-    all(dim(df1) != dim(df2))
-  ) {
-    stop("Datasets must have equal dimensions, column names")
-  }
+    !all(names(df1) == names(df2)) |
+    !all(dim(df1) == dim(df2))
+  ) stop("Datasets must have equal dimensions, column names")
   
-  if(
-    !all(codes %in% names(df1))
-  ) {
-    stop("All codes must appear in datasets")
-  }
+  if(!all(codes %in% names(df1))) stop("All codes must appear in datasets")
   
   out <- tibble(
     code = codes,
@@ -33,6 +27,11 @@ calculate_reliability <- function(df1, df2, codes) {
   for(i in 1:nrow(out)) {
     
     x <- out$code[i]
+    
+    if(
+      !is.numeric(df1[[x]]) |
+      !is.numeric(df2[[x]])
+    ) stop("Variable " %+% x %+% " must be numeric")
     
     ratings <- bind_cols(
       "x1" = df1[[x]],
@@ -60,6 +59,184 @@ calculate_reliability <- function(df1, df2, codes) {
   return(out)
   
 }
+
+
+
+####  Q1  ####
+# Round 1
+q1_r1_ag <- read.xlsx(
+  here("Coding", "Q1 Reliability", "ASIS Coding - Q1 - Reliability 1 - AG Codes.xlsx"),
+  sheet = "Q1 Ava Coding",
+  startRow = 2,
+  rows = 2:52
+) %>%
+  select(
+    -c(`Addressing.Stigma.&.Prejudice.(PARENT.CODE)`, Stigma.from.Others, Comments)
+  ) %>%
+  rename(
+    "Brief.Answers" = "Brief.Answers.(PARENT.CODE)",
+    "Maybe" = "Maybe/Don't.Know/.Not.Sure",
+    "Confirmation/Validation" = "Confirmation/Validation.(PARENT.CODE)",
+    "Confirmation.by.Others" = "Confirmation.by.Others.(e.g.,.Family,.Friends,.&.Loved.Ones)",
+    "Documentation.of.Diagnosis" = "Documentation.of.Diagnosis.(PARENT.CODE)",
+    "Access.to.Help.&.Support" = "Access.to.Help.&.Support.(PARENT.CODE)",
+    "Disability.Benefits" = "Disability.Benefits.(e.g.,.Disability.Benefits.(i.e.,.financial,.services.-.Social.Security,.vocational.services)",
+    "Personal.Reasons" = "Personal.Reasons.(PARENT.CODE)",
+    "To.Understand.Myself" = "To.Understand.Myself/My.Behavior",
+    "To.Support.Myself" = "To.Support.Myself.(e.g.,.better.cope.or.manage)",
+    "Curious" = "Curious.(without.reason.for.self-understanding)",
+    "Peace.of.Mind" = "Peace.of.Mind,.Self-Acceptance,.and/or.Self-Confidence.(i.e.,.fear.of.being.wrong,.or.not.knowing,.faking.it)",
+    "To.Feel.Less.Alone" = "To.Feel.Less.Alone/Like.an.Outsider.(i.e.,.Access.to.Community)",
+    "For.Others" = "I.Want.a.Diagnosis.for.Others/External.Reasons.for.Diagnosis.(PARENT.CODE)",
+    "Increase.Understanding" = "Increase.Understanding.and/or.Acceptance.from.Others",
+    "To.Receive.Support" = "To.Receive.Support.from.Others",
+    "Addressing.Stigma.&.Prejudice" = "Towards.self-identification.or.self-diagnosis",
+    "Don't.Want" = "Don't.Want.or.Need.a.Formal.Diagnosis.(PARENT.CODE)",
+    "Not.Helpful" = "A.diagnosis.is.NOT.helpful.at.this.time",
+    "Wouldn't.Change.Anything" = "A.diagnosis.wouldn't.change.anything",
+    "Other" = "OTHER.-.Mutually.Exclusive.Code"
+  )
+
+q1_r1_eg <- read.xlsx(
+  here("Coding", "Q1 Reliability", "ASIS Coding - Q1 - Reliability 1 - EG Codes.xlsx"),
+  startRow = 2,
+  rows = 2:52
+) %>%
+  select(-Stigma.from.Others) %>%
+  mutate(
+    Other = Other %>%
+      gsub("[^01]", "", .) %>%
+      as.numeric()
+  )
+
+q1_r1_codes <- setdiff(names(q1_r1_ag), c("response_id", "group", "want_dx", "why_want_dx"))
+
+q1_r1_reliability <- calculate_reliability(q1_r1_ag, q1_r1_eg, q1_r1_codes)
+
+q1_r1_reliability %>%
+  arrange(ac1)
+
+q1_r1_codes_to_redo <- q1_r1_reliability %>%
+  filter(ac1 < .8) %>%
+  pull(code)
+
+write.xlsx(
+  q1_r1_reliability,
+  here("Coding", "Q1 Reliability", "ASIS Coding - Q1 - Reliability 1 - Results.xlsx")
+)
+
+# Round 2
+q1_r2_ag <- read.xlsx(
+  here("Coding", "Q1 Reliability", "ASIS Coding - Q1 - Reliability 2 - AG Codes.xlsx"),
+  sheet = "Ava Coding",
+  rows = c(2, 53:102)
+) %>%
+  select(
+    -c(Comments)
+  )
+
+q1_r2_eg <- read.xlsx(
+  here("Coding", "Q1 Reliability", "ASIS Coding - Q1 - Reliability 2 - EG Codes.xlsx"),
+  rows = c(2, 53:102)
+)
+
+q1_r2_codes <- q1_r1_codes_to_redo
+
+q1_r2_reliability <- calculate_reliability(q1_r2_ag, q1_r2_eg, q1_r2_codes)
+
+q1_r2_reliability %>%
+  arrange(ac1)
+
+q1_r2_codes_to_redo <- q1_r2_reliability %>%
+  filter(ac1 < .8) %>%
+  pull(code)
+
+write.xlsx(
+  q1_r2_reliability,
+  here("Coding", "Q1 Reliability", "ASIS Coding - Q1 - Reliability 2 - Results.xlsx")
+)
+
+# Round 3
+q1_r3_ag <- read.xlsx(
+  here("Coding", "Q1 Reliability", "ASIS Coding - Q1 - Reliability 3 - AG Codes.xlsx"),
+  rows = c(2, 103:158)
+) %>%
+  select(
+    -c(Comments)
+  )
+
+q1_r3_eg <- read.xlsx(
+  here("Coding", "Q1 Reliability", "ASIS Coding - Q1 - Reliability 3 - EG Codes.xlsx"),
+  rows = c(2, 103:158)
+)
+
+q1_r3_codes <- c("Confirmation/Validation", "Self-Confirmation", "To.Better.Understand.and.Support.Myself")
+
+q1_r3_reliability <- calculate_reliability(q1_r3_ag, q1_r3_eg, q1_r3_codes)
+
+q1_r3_reliability %>%
+  arrange(ac1)
+
+q1_r3_codes_to_redo <- q1_r3_reliability %>%
+  filter(ac1 < .8) %>%
+  pull(code)
+
+write.xlsx(
+  q1_r3_reliability,
+  here("Coding", "Q1 Reliability", "ASIS Coding - Q1 - Reliability 3 - Results.xlsx")
+)
+
+
+
+####  Q2  ####
+q2_r1_ag <- read.xlsx(
+  here("Coding", "Q2 Reliability", "ASIS Coding - Q2 - Reliability 1 - AG Codes.xlsx"),
+  sheet = "Q2 Ava Coded",
+  startRow = 2,
+  rows = 2:52
+) %>%
+  select(-Comments) %>%
+  rename(
+    "Brief.Answers" = "Brief.Answers.(PARENT.CODE)",
+    "Maybe" = "Neutral/Can't.Decide/Either.Way",
+    "Stigma,.Prejudice,.and.Disc." = "Stigma,.Prejudice,.and.Discrimination.(PARENT.CODE)",
+    "Medical" = "Medical.(e.g.,.From.Doctors,.Insurance.Companies)",
+    "As.a.Parent" = "As.a.parent/potential.parent.(e.g.,.potential.loss.of.custody.for.children)",
+    "Loss.of.Rights" = "Loss.of.Rights.and/or.Autonomy",
+    "Burdensome" = 'Getting.a.diagnosis.is.burdensome.or.a.\"hassle\"',
+    "Gender.Identity" = "Specific.burdens.related.to.gender.identity.of.the.person.(e.g.,.woman,.assigned.female.at.birth,.transgender)",
+    "Labels.are.not.Helpful" = "Labels.are.NOT.helpful.(PARENT.CODE)",
+    "Diagnosis.has.no.Benefits" = "Diagnosis.has.NO.Benefits.(PARENT.CODE)",
+    "Change.to.how.I.see.myself" = "Change.to.how.I.see.myself.(PARENT.CODE)",
+    "Other" = "OTHER.-.Mutually.Exclusive.Code"
+  )
+
+q2_r1_eg <- read.xlsx(
+  here("Coding", "Q2 Reliability", "ASIS Coding - Q2 - Reliability 1 - EG Codes.xlsx"),
+  startRow = 2,
+  rows = 2:52
+) %>%
+  mutate(
+    Other = Other %>%
+      gsub("[^01]", "", .) %>%
+      as.numeric()
+  )
+
+q2_r1_codes <- setdiff(names(q2_r1_ag), c("response_id", "group", "want_dx", "why_dont_want_dx"))
+
+q2_r1_reliability <- calculate_reliability(q2_r1_ag, q2_r1_eg, q2_r1_codes)
+
+q2_r1_reliability %>%
+  arrange(ac1)
+
+q2_r1_codes_to_redo <- q2_r1_reliability %>%
+  filter(ac1 < .8) %>%
+  pull(code)
+
+write.xlsx(
+  q2_r1_reliability,
+  here("Coding", "Q2 Reliability", "ASIS Coding - Q2 - Reliability 1 - Results.xlsx")
+)
 
 
 
