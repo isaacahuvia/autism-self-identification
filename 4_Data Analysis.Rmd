@@ -228,6 +228,7 @@ nominal_outcomes <- df %>%
          raads_cutoff, 
          disability,
          support_current_mental_health:support_need_health,
+         matches("^support_.*any$"),
          autism_dis, 
          starts_with("fam"),
          starts_with("friend")) %>%
@@ -286,7 +287,6 @@ output_ordinal <- function(x) {
   test <- wilcox.test(
     as.numeric(df[[x]]) ~ df$self_id, 
     na.rm = T, 
-    paired = F, 
     exact = F
   )
   

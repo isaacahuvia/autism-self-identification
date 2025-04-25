@@ -497,14 +497,17 @@ recoded_data <- high_attention_respondents %>%
     
     
     ### Support needs
-    ## Current supports total
+    ## Current supports total/any
     support_current_total = sum(c_across(starts_with("support_current_"))),
+    support_current_any = any(c_across(starts_with("support_current_"))),
     
-    ## Past supports total
+    ## Past supports total/any
     support_past_total = sum(c_across(starts_with("support_past_"))),
+    support_past_any = any(c_across(starts_with("support_past_"))),
     
-    ## Unmet support needs total
-    support_need_total = sum(c_across(starts_with("support_need_")))
+    ## Unmet support needs total/any
+    support_need_total = sum(c_across(starts_with("support_need_"))),
+    support_need_any = any(c_across(starts_with("support_need_")))
     
   ) %>%
   ungroup()
