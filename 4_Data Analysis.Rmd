@@ -372,7 +372,8 @@ df %>%
 ggsave(filename = here("Figures", "Autistic Traits by Group.png"),
        width = 8,
        height = 5,
-       units = "in")
+       units = "in",
+       dpi = 300)
 ```
 
 ## Supports
@@ -418,7 +419,8 @@ df %>%
 ggsave(filename = here("Figures", "Supports by Group.png"),
        width = 8,
        height = 5,
-       units = "in")
+       units = "in",
+       dpi = 300)
 ```
 
 ## Psychosocial Outcomes
@@ -584,7 +586,8 @@ ggsave(plot = combined_plot,
        filename = here("Figures", "Psychological Outcome Distributions Group.png"),
        width = 5.5,
        height = 7,
-       units = "in")
+       units = "in",
+       dpi = 300)
 ```
 
 # Additional Analyses
@@ -621,7 +624,7 @@ df %>%
   group_by(name) %>%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %>%
   kable() %>%
   kable_styling()
@@ -634,7 +637,7 @@ df %>%
   group_by(name) %>%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %>%
   kable() %>%
   kable_styling()
@@ -650,7 +653,7 @@ df %>%
   group_by(name) %>%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %>%
   kable() %>%
   kable_styling()
@@ -663,7 +666,7 @@ df %>%
   group_by(name) %>%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %>%
   kable() %>%
   kable_styling()
@@ -680,10 +683,10 @@ for(x in q4_cols) {
   table <- table(df$self_id, df[[x]])
   
   sum_self_id <- sum(df[[x]][df$self_id], na.rm = T)
-  mean_self_id <- percent(mean(df[[x]][df$self_id], na.rm = T))
+  mean_self_id <- percent(mean(df[[x]][df$self_id], na.rm = T), .1)
   
   sum_dx <- sum(df[[x]][!df$self_id], na.rm = T)
-  mean_dx <- percent(mean(df[[x]][!df$self_id], na.rm = T))
+  mean_dx <- percent(mean(df[[x]][!df$self_id], na.rm = T), .1)
 
   chisq <- chisq.test(table)
   
@@ -726,7 +729,7 @@ df %>%
   group_by(name) %>%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %>%
   kable() %>%
   kable_styling()
@@ -743,10 +746,10 @@ for(x in q5_cols) {
   table <- table(df$self_id, df[[x]])
   
   sum_self_id <- sum(df[[x]][df$self_id], na.rm = T)
-  mean_self_id <- percent(mean(df[[x]][df$self_id], na.rm = T))
+  mean_self_id <- percent(mean(df[[x]][df$self_id], na.rm = T), .1)
   
   sum_dx <- sum(df[[x]][!df$self_id], na.rm = T)
-  mean_dx <- percent(mean(df[[x]][!df$self_id], na.rm = T))
+  mean_dx <- percent(mean(df[[x]][!df$self_id], na.rm = T), .1)
 
   chisq <- chisq.test(table)
   

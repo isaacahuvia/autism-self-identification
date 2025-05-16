@@ -6199,7 +6199,8 @@ U = 7513.00
 <pre class="r"><code>ggsave(filename = here(&quot;Figures&quot;, &quot;Autistic Traits by Group.png&quot;),
        width = 8,
        height = 5,
-       units = &quot;in&quot;)</code></pre>
+       units = &quot;in&quot;,
+       dpi = 300)</code></pre>
 </div>
 <div id="supports" class="section level2">
 <h2>Supports</h2>
@@ -6243,7 +6244,8 @@ U = 7513.00
 <pre class="r"><code>ggsave(filename = here(&quot;Figures&quot;, &quot;Supports by Group.png&quot;),
        width = 8,
        height = 5,
-       units = &quot;in&quot;)</code></pre>
+       units = &quot;in&quot;,
+       dpi = 300)</code></pre>
 </div>
 <div id="psychosocial-outcomes" class="section level2">
 <h2>Psychosocial Outcomes</h2>
@@ -6398,7 +6400,8 @@ combined_plot</code></pre>
        filename = here(&quot;Figures&quot;, &quot;Psychological Outcome Distributions Group.png&quot;),
        width = 5.5,
        height = 7,
-       units = &quot;in&quot;)</code></pre>
+       units = &quot;in&quot;,
+       dpi = 300)</code></pre>
 </div>
 </div>
 <div id="additional-analyses" class="section level1">
@@ -6445,7 +6448,7 @@ df %&gt;%
   group_by(name) %&gt;%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %&gt;%
   kable() %&gt;%
   kable_styling()</code></pre>
@@ -6472,7 +6475,7 @@ q1_access_accommodation
 25
 </td>
 <td style="text-align:left;">
-17%
+17.0%
 </td>
 </tr>
 <tr>
@@ -6483,7 +6486,7 @@ q1_access_disab
 9
 </td>
 <td style="text-align:left;">
-6%
+6.1%
 </td>
 </tr>
 <tr>
@@ -6494,7 +6497,7 @@ q1_access_healthcare
 1
 </td>
 <td style="text-align:left;">
-1%
+0.7%
 </td>
 </tr>
 <tr>
@@ -6505,7 +6508,7 @@ q1_access_legal
 1
 </td>
 <td style="text-align:left;">
-1%
+0.7%
 </td>
 </tr>
 <tr>
@@ -6516,7 +6519,7 @@ q1_access_parent
 41
 </td>
 <td style="text-align:left;">
-28%
+27.9%
 </td>
 </tr>
 <tr>
@@ -6527,7 +6530,7 @@ q1_brief_maybe
 1
 </td>
 <td style="text-align:left;">
-1%
+0.7%
 </td>
 </tr>
 <tr>
@@ -6538,7 +6541,7 @@ q1_brief_no
 5
 </td>
 <td style="text-align:left;">
-3%
+3.4%
 </td>
 </tr>
 <tr>
@@ -6549,7 +6552,7 @@ q1_brief_parent
 7
 </td>
 <td style="text-align:left;">
-5%
+4.8%
 </td>
 </tr>
 <tr>
@@ -6560,7 +6563,7 @@ q1_brief_yes
 1
 </td>
 <td style="text-align:left;">
-1%
+0.7%
 </td>
 </tr>
 <tr>
@@ -6571,7 +6574,7 @@ q1_documentation
 4
 </td>
 <td style="text-align:left;">
-3%
+2.8%
 </td>
 </tr>
 <tr>
@@ -6582,7 +6585,7 @@ q1_dont_want_no_change
 1
 </td>
 <td style="text-align:left;">
-1%
+0.7%
 </td>
 </tr>
 <tr>
@@ -6593,7 +6596,7 @@ q1_dont_want_not_helpful
 3
 </td>
 <td style="text-align:left;">
-2%
+2.0%
 </td>
 </tr>
 <tr>
@@ -6604,7 +6607,7 @@ q1_dont_want_parent
 7
 </td>
 <td style="text-align:left;">
-5%
+4.8%
 </td>
 </tr>
 <tr>
@@ -6615,7 +6618,7 @@ q1_other
 4
 </td>
 <td style="text-align:left;">
-3%
+2.7%
 </td>
 </tr>
 <tr>
@@ -6626,7 +6629,7 @@ q1_others_parent
 16
 </td>
 <td style="text-align:left;">
-11%
+10.9%
 </td>
 </tr>
 <tr>
@@ -6637,7 +6640,7 @@ q1_others_support
 3
 </td>
 <td style="text-align:left;">
-2%
+2.0%
 </td>
 </tr>
 <tr>
@@ -6648,7 +6651,7 @@ q1_others_understanding
 8
 </td>
 <td style="text-align:left;">
-5%
+5.4%
 </td>
 </tr>
 <tr>
@@ -6659,7 +6662,7 @@ q1_stigma
 8
 </td>
 <td style="text-align:left;">
-5%
+5.4%
 </td>
 </tr>
 <tr>
@@ -6670,7 +6673,7 @@ q1_understand_support
 26
 </td>
 <td style="text-align:left;">
-18%
+17.7%
 </td>
 </tr>
 <tr>
@@ -6681,7 +6684,7 @@ q1_valid_other
 11
 </td>
 <td style="text-align:left;">
-7%
+7.5%
 </td>
 </tr>
 <tr>
@@ -6692,7 +6695,7 @@ q1_valid_parent
 87
 </td>
 <td style="text-align:left;">
-59%
+59.2%
 </td>
 </tr>
 <tr>
@@ -6703,7 +6706,7 @@ q1_valid_pro
 12
 </td>
 <td style="text-align:left;">
-8%
+8.2%
 </td>
 </tr>
 <tr>
@@ -6714,7 +6717,7 @@ q1_valid_self
 51
 </td>
 <td style="text-align:left;">
-35%
+34.7%
 </td>
 </tr>
 </tbody>
@@ -6727,7 +6730,7 @@ df %&gt;%
   group_by(name) %&gt;%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %&gt;%
   kable() %&gt;%
   kable_styling()</code></pre>
@@ -6754,7 +6757,7 @@ q2_brief_maybe
 2
 </td>
 <td style="text-align:left;">
-1%
+1.4%
 </td>
 </tr>
 <tr>
@@ -6765,7 +6768,7 @@ q2_brief_no
 48
 </td>
 <td style="text-align:left;">
-33%
+33.1%
 </td>
 </tr>
 <tr>
@@ -6776,7 +6779,7 @@ q2_brief_parent
 52
 </td>
 <td style="text-align:left;">
-36%
+35.9%
 </td>
 </tr>
 <tr>
@@ -6787,7 +6790,7 @@ q2_brief_yes
 2
 </td>
 <td style="text-align:left;">
-1%
+1.4%
 </td>
 </tr>
 <tr>
@@ -6798,7 +6801,7 @@ q2_burden_admin
 4
 </td>
 <td style="text-align:left;">
-3%
+2.8%
 </td>
 </tr>
 <tr>
@@ -6809,7 +6812,7 @@ q2_burden_financial
 7
 </td>
 <td style="text-align:left;">
-5%
+4.9%
 </td>
 </tr>
 <tr>
@@ -6820,7 +6823,7 @@ q2_burden_gender
 4
 </td>
 <td style="text-align:left;">
-3%
+2.8%
 </td>
 </tr>
 <tr>
@@ -6831,7 +6834,7 @@ q2_burden_parent
 17
 </td>
 <td style="text-align:left;">
-12%
+11.8%
 </td>
 </tr>
 <tr>
@@ -6842,7 +6845,7 @@ q2_burden_time
 4
 </td>
 <td style="text-align:left;">
-3%
+2.8%
 </td>
 </tr>
 <tr>
@@ -6853,7 +6856,7 @@ q2_how_i_see_myself
 2
 </td>
 <td style="text-align:left;">
-1%
+1.4%
 </td>
 </tr>
 <tr>
@@ -6864,7 +6867,7 @@ q2_labels_not_helpful
 5
 </td>
 <td style="text-align:left;">
-3%
+3.4%
 </td>
 </tr>
 <tr>
@@ -6875,7 +6878,7 @@ q2_no_benefit
 11
 </td>
 <td style="text-align:left;">
-8%
+7.6%
 </td>
 </tr>
 <tr>
@@ -6886,7 +6889,7 @@ q2_other
 10
 </td>
 <td style="text-align:left;">
-7%
+6.9%
 </td>
 </tr>
 <tr>
@@ -6897,7 +6900,7 @@ q2_stigma_as_a_parent
 7
 </td>
 <td style="text-align:left;">
-5%
+4.9%
 </td>
 </tr>
 <tr>
@@ -6908,7 +6911,7 @@ q2_stigma_employment
 6
 </td>
 <td style="text-align:left;">
-4%
+4.2%
 </td>
 </tr>
 <tr>
@@ -6919,7 +6922,7 @@ q2_stigma_immigration
 5
 </td>
 <td style="text-align:left;">
-3%
+3.5%
 </td>
 </tr>
 <tr>
@@ -6930,7 +6933,7 @@ q2_stigma_internalized
 3
 </td>
 <td style="text-align:left;">
-2%
+2.1%
 </td>
 </tr>
 <tr>
@@ -6941,7 +6944,7 @@ q2_stigma_medical
 12
 </td>
 <td style="text-align:left;">
-8%
+8.3%
 </td>
 </tr>
 <tr>
@@ -6952,7 +6955,7 @@ q2_stigma_others
 13
 </td>
 <td style="text-align:left;">
-9%
+9.0%
 </td>
 </tr>
 <tr>
@@ -6963,7 +6966,7 @@ q2_stigma_parent
 62
 </td>
 <td style="text-align:left;">
-43%
+42.8%
 </td>
 </tr>
 <tr>
@@ -6974,7 +6977,7 @@ q2_stigma_rights
 6
 </td>
 <td style="text-align:left;">
-4%
+4.1%
 </td>
 </tr>
 </tbody>
@@ -6990,7 +6993,7 @@ df %&gt;%
   group_by(name) %&gt;%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %&gt;%
   kable() %&gt;%
   kable_styling()</code></pre>
@@ -7017,7 +7020,7 @@ q3_advised_against
 1
 </td>
 <td style="text-align:left;">
-1%
+1.0%
 </td>
 </tr>
 <tr>
@@ -7028,7 +7031,7 @@ q3_discrimination_judgment
 8
 </td>
 <td style="text-align:left;">
-8%
+8.0%
 </td>
 </tr>
 <tr>
@@ -7039,7 +7042,7 @@ q3_emotional_barriers
 5
 </td>
 <td style="text-align:left;">
-5%
+5.0%
 </td>
 </tr>
 <tr>
@@ -7050,7 +7053,7 @@ q3_health
 7
 </td>
 <td style="text-align:left;">
-7%
+7.0%
 </td>
 </tr>
 <tr>
@@ -7061,7 +7064,7 @@ q3_healthcare_other
 34
 </td>
 <td style="text-align:left;">
-34%
+34.0%
 </td>
 </tr>
 <tr>
@@ -7072,7 +7075,7 @@ q3_healthcare_parent
 52
 </td>
 <td style="text-align:left;">
-52%
+52.0%
 </td>
 </tr>
 <tr>
@@ -7083,7 +7086,7 @@ q3_healthcare_professionals
 22
 </td>
 <td style="text-align:left;">
-22%
+22.0%
 </td>
 </tr>
 <tr>
@@ -7094,7 +7097,7 @@ q3_medication
 2
 </td>
 <td style="text-align:left;">
-2%
+2.0%
 </td>
 </tr>
 <tr>
@@ -7105,7 +7108,7 @@ q3_resources
 60
 </td>
 <td style="text-align:left;">
-60%
+60.0%
 </td>
 </tr>
 <tr>
@@ -7116,7 +7119,7 @@ q3_short_answer
 2
 </td>
 <td style="text-align:left;">
-2%
+2.0%
 </td>
 </tr>
 </tbody>
@@ -7129,7 +7132,7 @@ df %&gt;%
   group_by(name) %&gt;%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %&gt;%
   kable() %&gt;%
   kable_styling()</code></pre>
@@ -7156,7 +7159,7 @@ q4_access_resources
 114
 </td>
 <td style="text-align:left;">
-61%
+61.0%
 </td>
 </tr>
 <tr>
@@ -7167,7 +7170,7 @@ q4_access_surroundings
 39
 </td>
 <td style="text-align:left;">
-21%
+20.9%
 </td>
 </tr>
 <tr>
@@ -7178,7 +7181,7 @@ q4_cognitive_emotional
 35
 </td>
 <td style="text-align:left;">
-19%
+18.7%
 </td>
 </tr>
 <tr>
@@ -7189,7 +7192,7 @@ q4_instability
 1
 </td>
 <td style="text-align:left;">
-1%
+0.5%
 </td>
 </tr>
 <tr>
@@ -7200,7 +7203,7 @@ q4_lack_knowledge
 21
 </td>
 <td style="text-align:left;">
-11%
+11.2%
 </td>
 </tr>
 <tr>
@@ -7211,7 +7214,7 @@ q4_mental_health
 12
 </td>
 <td style="text-align:left;">
-6%
+6.4%
 </td>
 </tr>
 <tr>
@@ -7222,7 +7225,7 @@ q4_mistrust_fear
 22
 </td>
 <td style="text-align:left;">
-12%
+11.8%
 </td>
 </tr>
 <tr>
@@ -7233,7 +7236,7 @@ q4_no_diagnosis
 9
 </td>
 <td style="text-align:left;">
-5%
+4.8%
 </td>
 </tr>
 <tr>
@@ -7244,7 +7247,7 @@ q4_past_experiences
 8
 </td>
 <td style="text-align:left;">
-4%
+4.3%
 </td>
 </tr>
 <tr>
@@ -7255,7 +7258,7 @@ q4_short_answers
 13
 </td>
 <td style="text-align:left;">
-7%
+7.0%
 </td>
 </tr>
 </tbody>
@@ -7272,10 +7275,10 @@ for(x in q4_cols) {
   table &lt;- table(df$self_id, df[[x]])
   
   sum_self_id &lt;- sum(df[[x]][df$self_id], na.rm = T)
-  mean_self_id &lt;- percent(mean(df[[x]][df$self_id], na.rm = T))
+  mean_self_id &lt;- percent(mean(df[[x]][df$self_id], na.rm = T), .1)
   
   sum_dx &lt;- sum(df[[x]][!df$self_id], na.rm = T)
-  mean_dx &lt;- percent(mean(df[[x]][!df$self_id], na.rm = T))
+  mean_dx &lt;- percent(mean(df[[x]][!df$self_id], na.rm = T), .1)
 
   chisq &lt;- chisq.test(table)
   
@@ -7341,10 +7344,10 @@ p_adj
 q4_access_surroundings
 </td>
 <td style="text-align:left;">
-19 (17%)
+19 (16.8%)
 </td>
 <td style="text-align:left;">
-20 (27%)
+20 (27.0%)
 </td>
 <td style="text-align:right;">
 2.2408024
@@ -7361,10 +7364,10 @@ q4_access_surroundings
 q4_access_resources
 </td>
 <td style="text-align:left;">
-78 (69%)
+78 (69.0%)
 </td>
 <td style="text-align:left;">
-36 (49%)
+36 (48.6%)
 </td>
 <td style="text-align:right;">
 6.9698782
@@ -7381,10 +7384,10 @@ q4_access_resources
 q4_cognitive_emotional
 </td>
 <td style="text-align:left;">
-21 (19%)
+21 (18.6%)
 </td>
 <td style="text-align:left;">
-14 (19%)
+14 (18.9%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -7401,10 +7404,10 @@ q4_cognitive_emotional
 q4_instability
 </td>
 <td style="text-align:left;">
-0 (0%)
+0 (0.0%)
 </td>
 <td style="text-align:left;">
-1 (1%)
+1 (1.4%)
 </td>
 <td style="text-align:right;">
 NA
@@ -7421,10 +7424,10 @@ NA
 q4_mental_health
 </td>
 <td style="text-align:left;">
-11 (10%)
+11 (9.7%)
 </td>
 <td style="text-align:left;">
-1 (1%)
+1 (1.4%)
 </td>
 <td style="text-align:right;">
 NA
@@ -7441,10 +7444,10 @@ NA
 q4_no_diagnosis
 </td>
 <td style="text-align:left;">
-9 (8%)
+9 (8.0%)
 </td>
 <td style="text-align:left;">
-0 (0%)
+0 (0.0%)
 </td>
 <td style="text-align:right;">
 NA
@@ -7461,10 +7464,10 @@ NA
 q4_lack_knowledge
 </td>
 <td style="text-align:left;">
-14 (12%)
+14 (12.4%)
 </td>
 <td style="text-align:left;">
-7 (9%)
+7 (9.5%)
 </td>
 <td style="text-align:right;">
 0.1472412
@@ -7481,10 +7484,10 @@ q4_lack_knowledge
 q4_mistrust_fear
 </td>
 <td style="text-align:left;">
-13 (12%)
+13 (11.5%)
 </td>
 <td style="text-align:left;">
-9 (12%)
+9 (12.2%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -7501,10 +7504,10 @@ q4_mistrust_fear
 q4_past_experiences
 </td>
 <td style="text-align:left;">
-4 (4%)
+4 (3.5%)
 </td>
 <td style="text-align:left;">
-4 (5%)
+4 (5.4%)
 </td>
 <td style="text-align:right;">
 NA
@@ -7521,10 +7524,10 @@ NA
 q4_short_answers
 </td>
 <td style="text-align:left;">
-5 (4%)
+5 (4.4%)
 </td>
 <td style="text-align:left;">
-8 (11%)
+8 (10.8%)
 </td>
 <td style="text-align:right;">
 1.9183625
@@ -7546,7 +7549,7 @@ df %&gt;%
   group_by(name) %&gt;%
   summarize(
     n = sum(value, na.rm = T),
-    pct = percent(mean(value, na.rm = T))
+    pct = percent(mean(value, na.rm = T), .1)
   ) %&gt;%
   kable() %&gt;%
   kable_styling()</code></pre>
@@ -7573,7 +7576,7 @@ q5_birth
 8
 </td>
 <td style="text-align:left;">
-3%
+3.1%
 </td>
 </tr>
 <tr>
@@ -7584,7 +7587,7 @@ q5_clinical_parent
 87
 </td>
 <td style="text-align:left;">
-33%
+33.3%
 </td>
 </tr>
 <tr>
@@ -7595,7 +7598,7 @@ q5_clinical_pathology
 6
 </td>
 <td style="text-align:left;">
-2%
+2.3%
 </td>
 </tr>
 <tr>
@@ -7606,7 +7609,7 @@ q5_comparison
 92
 </td>
 <td style="text-align:left;">
-35%
+35.2%
 </td>
 </tr>
 <tr>
@@ -7617,7 +7620,7 @@ q5_diagnostic_interests
 22
 </td>
 <td style="text-align:left;">
-8%
+8.4%
 </td>
 </tr>
 <tr>
@@ -7628,7 +7631,7 @@ q5_diagnostic_parent
 153
 </td>
 <td style="text-align:left;">
-59%
+58.6%
 </td>
 </tr>
 <tr>
@@ -7639,7 +7642,7 @@ q5_diagnostic_rigidity
 17
 </td>
 <td style="text-align:left;">
-7%
+6.5%
 </td>
 </tr>
 <tr>
@@ -7650,7 +7653,7 @@ q5_diagnostic_sensory
 34
 </td>
 <td style="text-align:left;">
-13%
+13.0%
 </td>
 </tr>
 <tr>
@@ -7661,7 +7664,7 @@ q5_diagnostic_social
 139
 </td>
 <td style="text-align:left;">
-53%
+53.3%
 </td>
 </tr>
 <tr>
@@ -7672,7 +7675,7 @@ q5_diagnostic_stimming
 18
 </td>
 <td style="text-align:left;">
-7%
+6.9%
 </td>
 </tr>
 <tr>
@@ -7683,7 +7686,7 @@ q5_difference
 15
 </td>
 <td style="text-align:left;">
-6%
+5.7%
 </td>
 </tr>
 <tr>
@@ -7694,7 +7697,7 @@ q5_disability
 25
 </td>
 <td style="text-align:left;">
-10%
+9.6%
 </td>
 </tr>
 <tr>
@@ -7705,7 +7708,7 @@ q5_first_person
 76
 </td>
 <td style="text-align:left;">
-29%
+29.1%
 </td>
 </tr>
 <tr>
@@ -7716,7 +7719,7 @@ q5_idk
 14
 </td>
 <td style="text-align:left;">
-5%
+5.4%
 </td>
 </tr>
 <tr>
@@ -7727,7 +7730,7 @@ q5_masking
 8
 </td>
 <td style="text-align:left;">
-3%
+3.1%
 </td>
 </tr>
 <tr>
@@ -7738,7 +7741,7 @@ q5_neurodiversity_nuance
 19
 </td>
 <td style="text-align:left;">
-7%
+7.3%
 </td>
 </tr>
 <tr>
@@ -7749,7 +7752,7 @@ q5_neurodiversity_parent
 39
 </td>
 <td style="text-align:left;">
-15%
+14.9%
 </td>
 </tr>
 <tr>
@@ -7760,7 +7763,7 @@ q5_processing_cognitive
 57
 </td>
 <td style="text-align:left;">
-22%
+21.8%
 </td>
 </tr>
 <tr>
@@ -7771,7 +7774,7 @@ q5_processing_information
 69
 </td>
 <td style="text-align:left;">
-26%
+26.4%
 </td>
 </tr>
 <tr>
@@ -7782,7 +7785,7 @@ q5_processing_neurological
 70
 </td>
 <td style="text-align:left;">
-27%
+26.8%
 </td>
 </tr>
 <tr>
@@ -7793,7 +7796,7 @@ q5_processing_parent
 153
 </td>
 <td style="text-align:left;">
-59%
+58.6%
 </td>
 </tr>
 <tr>
@@ -7804,7 +7807,7 @@ q5_subjective
 31
 </td>
 <td style="text-align:left;">
-12%
+11.9%
 </td>
 </tr>
 <tr>
@@ -7815,7 +7818,7 @@ q5_various
 43
 </td>
 <td style="text-align:left;">
-16%
+16.5%
 </td>
 </tr>
 </tbody>
@@ -7832,10 +7835,10 @@ for(x in q5_cols) {
   table &lt;- table(df$self_id, df[[x]])
   
   sum_self_id &lt;- sum(df[[x]][df$self_id], na.rm = T)
-  mean_self_id &lt;- percent(mean(df[[x]][df$self_id], na.rm = T))
+  mean_self_id &lt;- percent(mean(df[[x]][df$self_id], na.rm = T), .1)
   
   sum_dx &lt;- sum(df[[x]][!df$self_id], na.rm = T)
-  mean_dx &lt;- percent(mean(df[[x]][!df$self_id], na.rm = T))
+  mean_dx &lt;- percent(mean(df[[x]][!df$self_id], na.rm = T), .1)
 
   chisq &lt;- chisq.test(table)
   
@@ -7900,10 +7903,10 @@ p_adj
 q5_diagnostic_parent
 </td>
 <td style="text-align:left;">
-82 (56%)
+82 (55.8%)
 </td>
 <td style="text-align:left;">
-71 (62%)
+71 (62.3%)
 </td>
 <td style="text-align:right;">
 0.8659391
@@ -7920,10 +7923,10 @@ q5_diagnostic_parent
 q5_diagnostic_social
 </td>
 <td style="text-align:left;">
-76 (52%)
+76 (51.7%)
 </td>
 <td style="text-align:left;">
-63 (55%)
+63 (55.3%)
 </td>
 <td style="text-align:right;">
 0.1998697
@@ -7940,10 +7943,10 @@ q5_diagnostic_social
 q5_diagnostic_stimming
 </td>
 <td style="text-align:left;">
-9 (6%)
+9 (6.1%)
 </td>
 <td style="text-align:left;">
-9 (8%)
+9 (7.9%)
 </td>
 <td style="text-align:right;">
 0.0987116
@@ -7960,10 +7963,10 @@ q5_diagnostic_stimming
 q5_diagnostic_rigidity
 </td>
 <td style="text-align:left;">
-9 (6%)
+9 (6.1%)
 </td>
 <td style="text-align:left;">
-8 (7%)
+8 (7.0%)
 </td>
 <td style="text-align:right;">
 0.0014277
@@ -7980,10 +7983,10 @@ q5_diagnostic_rigidity
 q5_diagnostic_interests
 </td>
 <td style="text-align:left;">
-16 (11%)
+16 (10.9%)
 </td>
 <td style="text-align:left;">
-6 (5%)
+6 (5.3%)
 </td>
 <td style="text-align:right;">
 1.9506295
@@ -8000,10 +8003,10 @@ q5_diagnostic_interests
 q5_diagnostic_sensory
 </td>
 <td style="text-align:left;">
-22 (15%)
+22 (15.0%)
 </td>
 <td style="text-align:left;">
-12 (11%)
+12 (10.5%)
 </td>
 <td style="text-align:right;">
 0.7595261
@@ -8020,10 +8023,10 @@ q5_diagnostic_sensory
 q5_processing_parent
 </td>
 <td style="text-align:left;">
-92 (63%)
+92 (62.6%)
 </td>
 <td style="text-align:left;">
-61 (54%)
+61 (53.5%)
 </td>
 <td style="text-align:right;">
 1.8224059
@@ -8040,10 +8043,10 @@ q5_processing_parent
 q5_processing_cognitive
 </td>
 <td style="text-align:left;">
-31 (21%)
+31 (21.1%)
 </td>
 <td style="text-align:left;">
-26 (23%)
+26 (22.8%)
 </td>
 <td style="text-align:right;">
 0.0332257
@@ -8060,10 +8063,10 @@ q5_processing_cognitive
 q5_processing_information
 </td>
 <td style="text-align:left;">
-40 (27%)
+40 (27.2%)
 </td>
 <td style="text-align:left;">
-29 (25%)
+29 (25.4%)
 </td>
 <td style="text-align:right;">
 0.0325909
@@ -8080,10 +8083,10 @@ q5_processing_information
 q5_processing_neurological
 </td>
 <td style="text-align:left;">
-48 (33%)
+48 (32.7%)
 </td>
 <td style="text-align:left;">
-22 (19%)
+22 (19.3%)
 </td>
 <td style="text-align:right;">
 5.1739483
@@ -8100,10 +8103,10 @@ q5_processing_neurological
 q5_difference
 </td>
 <td style="text-align:left;">
-9 (6%)
+9 (6.1%)
 </td>
 <td style="text-align:left;">
-6 (5%)
+6 (5.3%)
 </td>
 <td style="text-align:right;">
 0.0007692
@@ -8120,10 +8123,10 @@ q5_difference
 q5_various
 </td>
 <td style="text-align:left;">
-19 (13%)
+19 (12.9%)
 </td>
 <td style="text-align:left;">
-24 (21%)
+24 (21.1%)
 </td>
 <td style="text-align:right;">
 2.5197776
@@ -8140,10 +8143,10 @@ q5_various
 q5_first_person
 </td>
 <td style="text-align:left;">
-39 (27%)
+39 (26.5%)
 </td>
 <td style="text-align:left;">
-37 (32%)
+37 (32.5%)
 </td>
 <td style="text-align:right;">
 0.8240455
@@ -8160,10 +8163,10 @@ q5_first_person
 q5_comparison
 </td>
 <td style="text-align:left;">
-56 (38%)
+56 (38.1%)
 </td>
 <td style="text-align:left;">
-36 (32%)
+36 (31.6%)
 </td>
 <td style="text-align:right;">
 0.9260669
@@ -8180,10 +8183,10 @@ q5_comparison
 q5_idk
 </td>
 <td style="text-align:left;">
-6 (4%)
+6 (4.1%)
 </td>
 <td style="text-align:left;">
-8 (7%)
+8 (7.0%)
 </td>
 <td style="text-align:right;">
 0.5885860
@@ -8200,10 +8203,10 @@ q5_idk
 q5_birth
 </td>
 <td style="text-align:left;">
-5 (3%)
+5 (3.4%)
 </td>
 <td style="text-align:left;">
-3 (3%)
+3 (2.6%)
 </td>
 <td style="text-align:right;">
 NA
@@ -8220,10 +8223,10 @@ NA
 q5_clinical_parent
 </td>
 <td style="text-align:left;">
-41 (28%)
+41 (27.9%)
 </td>
 <td style="text-align:left;">
-46 (40%)
+46 (40.4%)
 </td>
 <td style="text-align:right;">
 3.9423335
@@ -8240,10 +8243,10 @@ q5_clinical_parent
 q5_clinical_pathology
 </td>
 <td style="text-align:left;">
-1 (1%)
+1 (0.7%)
 </td>
 <td style="text-align:left;">
-5 (4%)
+5 (4.4%)
 </td>
 <td style="text-align:right;">
 NA
@@ -8260,10 +8263,10 @@ NA
 q5_neurodiversity_parent
 </td>
 <td style="text-align:left;">
-20 (14%)
+20 (13.6%)
 </td>
 <td style="text-align:left;">
-19 (17%)
+19 (16.7%)
 </td>
 <td style="text-align:right;">
 0.2631865
@@ -8280,10 +8283,10 @@ q5_neurodiversity_parent
 q5_neurodiversity_nuance
 </td>
 <td style="text-align:left;">
-9 (6%)
+9 (6.1%)
 </td>
 <td style="text-align:left;">
-10 (9%)
+10 (8.8%)
 </td>
 <td style="text-align:right;">
 0.3329082
@@ -8300,10 +8303,10 @@ q5_neurodiversity_nuance
 q5_masking
 </td>
 <td style="text-align:left;">
-3 (2%)
+3 (2.0%)
 </td>
 <td style="text-align:left;">
-5 (4%)
+5 (4.4%)
 </td>
 <td style="text-align:right;">
 NA
@@ -8320,10 +8323,10 @@ NA
 q5_disability
 </td>
 <td style="text-align:left;">
-11 (7%)
+11 (7.5%)
 </td>
 <td style="text-align:left;">
-14 (12%)
+14 (12.3%)
 </td>
 <td style="text-align:right;">
 1.1974062
@@ -8340,10 +8343,10 @@ q5_disability
 q5_subjective
 </td>
 <td style="text-align:left;">
-12 (8%)
+12 (8.2%)
 </td>
 <td style="text-align:left;">
-19 (17%)
+19 (16.7%)
 </td>
 <td style="text-align:right;">
 3.6604367
