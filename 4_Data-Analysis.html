@@ -6401,214 +6401,8 @@ combined_plot</code></pre>
        units = &quot;in&quot;)</code></pre>
 </div>
 </div>
-<div id="follow-up-analyses" class="section level1">
-<h1>Follow-Up Analyses</h1>
-<div id="frequency-of-any-support-need" class="section level2">
-<h2>Frequency of <em>any</em> support need</h2>
-<pre class="r"><code>df %&gt;%
-  mutate(
-    any_need = 
-      support_need_mental_health |
-      support_need_functional |
-      support_need_case_management |
-      support_need_social |
-      support_need_vocational |
-      support_need_health
-  ) %&gt;%
-  group_by(self_id) %&gt;%
-  count(any_need) %&gt;%
-  mutate(percent = percent(n / sum(n), .1))</code></pre>
-<pre><code>## # A tibble: 4 × 4
-## # Groups:   self_id [2]
-##   self_id any_need     n percent
-##   &lt;lgl&gt;   &lt;lgl&gt;    &lt;int&gt; &lt;chr&gt;  
-## 1 FALSE   FALSE       61 53.0%  
-## 2 FALSE   TRUE        54 47.0%  
-## 3 TRUE    FALSE       42 28.6%  
-## 4 TRUE    TRUE       105 71.4%</code></pre>
-</div>
-<div id="commonality-analysis-of-well-being-by-self-identification-and-support-need" class="section level2">
-<h2>Commonality Analysis of Well-Being by Self-Identification and
-Support Need</h2>
-<pre class="r"><code>library(yhat)
-
-lm(
-  data = df,
-  formula = wemwbs_sum ~ self_id
-) %&gt;%
-  summary()</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = wemwbs_sum ~ self_id, data = df)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -28.080  -8.415  -0.080   7.585  32.585 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   42.080      1.077  39.089  &lt; 2e-16 ***
-## self_idTRUE   -4.664      1.443  -3.233  0.00139 ** 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 11.44 on 253 degrees of freedom
-##   (7 observations deleted due to missingness)
-## Multiple R-squared:  0.03968,    Adjusted R-squared:  0.03588 
-## F-statistic: 10.45 on 1 and 253 DF,  p-value: 0.001387</code></pre>
-<pre class="r"><code>lm(
-  data = df,
-  formula = wemwbs_sum ~ self_id + support_need_total
-) %&gt;%
-  summary()</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = wemwbs_sum ~ self_id + support_need_total, data = df)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -29.5910  -7.9111  -0.3029   8.0531  29.5316 
-## 
-## Coefficients:
-##                    Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)         43.5910     1.1479  37.974  &lt; 2e-16 ***
-## self_idTRUE         -3.1226     1.4874  -2.099 0.036784 *  
-## support_need_total  -1.1942     0.3567  -3.348 0.000939 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 11.22 on 252 degrees of freedom
-##   (7 observations deleted due to missingness)
-## Multiple R-squared:  0.08057,    Adjusted R-squared:  0.07327 
-## F-statistic: 11.04 on 2 and 252 DF,  p-value: 2.532e-05</code></pre>
-<pre class="r"><code>commonality(
-  aps(
-    dataMatrix = df,
-    dv = &quot;wemwbs_sum&quot;,
-    ivlist = c(&quot;self_id&quot;, &quot;support_need_total&quot;)
-  )
-) %&gt;%
-  kable() %&gt;%
-  kable_styling()</code></pre>
-<table class="table" style="color: black; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:right;">
-Coefficient
-</th>
-<th style="text-align:right;">
-% Total
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-self_id
-</td>
-<td style="text-align:right;">
-0.0160795
-</td>
-<td style="text-align:right;">
-0.1995773
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-support_need_total
-</td>
-<td style="text-align:right;">
-0.0408892
-</td>
-<td style="text-align:right;">
-0.5075122
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-self_id,support_need_total
-</td>
-<td style="text-align:right;">
-0.0235992
-</td>
-<td style="text-align:right;">
-0.2929105
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="equivalence-testing" class="section level2">
-<h2>Equivalence Testing</h2>
-<pre class="r"><code>eq_test &lt;- function(x) {
-  
-  id_mean = mean(df[[x]][df$self_id], na.rm = T)
-  dx_mean = mean(df[[x]][!df$self_id], na.rm = T)
-  
-  id_sd = sd(df[[x]][df$self_id], na.rm = T)
-  dx_sd = sd(df[[x]][!df$self_id], na.rm = T)
-  
-  id_n = sum(!is.na(df[[x]][df$self_id]))
-  dx_n = sum(!is.na(df[[x]][!df$self_id]))
-  
-  # This is the same as looking at the 90% CI and seeing if it overlaps a given bound...
-  TOSTER::tsum_TOST(
-    m1 = id_mean, m2 = dx_mean, sd1 = id_sd, sd2 = dx_sd, n1 = id_n, n2 = dx_n,
-    hypothesis = &quot;EQU&quot;,
-    paired = F,
-    var.equal = T,
-    eqb = .3,
-    alpha = .05, # This doesn&#39;t affect the test, only the provided CI
-    eqbound_type = &quot;SMD&quot;
-  )
-  
-}
-
-eq_test(&quot;cati_sum&quot;)</code></pre>
-<pre><code>## Warning: setting bound type to SMD produces biased results!</code></pre>
-<pre><code>## 
-## Two Sample t-test
-## 
-## The equivalence test was significant, t(251) = -2.296, p = 1.12e-02
-## The null hypothesis test was non-significant, t(251) = 0.0693, p = 9.45e-01
-## NHST: don&#39;t reject null significance hypothesis that the effect is equal to zero 
-## TOST: reject null equivalence hypothesis
-## 
-## TOST Results 
-##                  t  df p.value
-## t-test      0.0693 251   0.945
-## TOST Lower  2.4348 251   0.008
-## TOST Upper -2.2962 251   0.011
-## 
-## Effect Sizes 
-##            Estimate     SE              C.I. Conf. Level
-## Raw        0.193706 2.7951 [-4.4209, 4.8083]         0.9
-## Hedges&#39;s g 0.008763 0.1268 [-0.1992, 0.2167]         0.9
-## Note: SMD confidence intervals are an approximation. See vignette(&quot;SMD_calcs&quot;).</code></pre>
-<pre class="r"><code>eq_test(&quot;raads_sum&quot;)</code></pre>
-<pre><code>## Warning: setting bound type to SMD produces biased results!</code></pre>
-<pre><code>## 
-## Two Sample t-test
-## 
-## The equivalence test was non-significant, t(258) = -1.478, p = 7.03e-02
-## The null hypothesis test was non-significant, t(258) = 0.922, p = 3.57e-01
-## NHST: don&#39;t reject null significance hypothesis that the effect is equal to zero 
-## TOST: don&#39;t reject null equivalence hypothesis
-## 
-## TOST Results 
-##                  t  df p.value
-## t-test      0.9219 258   0.357
-## TOST Lower  3.3221 258 &lt; 0.001
-## TOST Upper -1.4784 258    0.07
-## 
-## Effect Sizes 
-##            Estimate     SE              C.I. Conf. Level
-## Raw          1.0004 1.0852  [-0.791, 2.7917]         0.9
-## Hedges&#39;s g   0.1149 0.1251 [-0.0904, 0.3199]         0.9
-## Note: SMD confidence intervals are an approximation. See vignette(&quot;SMD_calcs&quot;).</code></pre>
-</div>
+<div id="additional-analyses" class="section level1">
+<h1>Additional Analyses</h1>
 <div id="how-many-self-identifiers-want-a-diagnosis" class="section level2">
 <h2>How many self-identifiers want a diagnosis?</h2>
 <p>With Wald confidence intervals (normal approximation) and Wilson for
@@ -7509,9 +7303,12 @@ for(x in q4_cols) {
   
   q4_comparison &lt;- bind_rows(q4_comparison, new_row)
   
-}
-
-q4_comparison %&gt;%
+}</code></pre>
+<pre><code>## Warning in chisq.test(table): Chi-squared approximation may be incorrect
+## Warning in chisq.test(table): Chi-squared approximation may be incorrect
+## Warning in chisq.test(table): Chi-squared approximation may be incorrect
+## Warning in chisq.test(table): Chi-squared approximation may be incorrect</code></pre>
+<pre class="r"><code>q4_comparison %&gt;%
   mutate(p_adj = p.adjust(p_value, &quot;BH&quot;)) %&gt;%
   kable() %&gt;%
   kable_styling()</code></pre>
@@ -8066,9 +7863,11 @@ for(x in q5_cols) {
   
   q5_comparison &lt;- bind_rows(q5_comparison, new_row)
   
-}
-
-q5_comparison %&gt;%
+}</code></pre>
+<pre><code>## Warning in chisq.test(table): Chi-squared approximation may be incorrect
+## Warning in chisq.test(table): Chi-squared approximation may be incorrect
+## Warning in chisq.test(table): Chi-squared approximation may be incorrect</code></pre>
+<pre class="r"><code>q5_comparison %&gt;%
   mutate(p_adj = p.adjust(p_value, &quot;BH&quot;)) %&gt;%
   kable() %&gt;%
   kable_styling()</code></pre>
