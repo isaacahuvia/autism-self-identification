@@ -404,7 +404,8 @@ df %>%
              "health" = "Health\n(e.g., Specialized\nMedical Care)",
              "mental_health" = "Mental Health\n(e.g., Therapy)",
              "social" = "Social\n(e.g., Social\nSkills Training)",
-             "vocational" = "Vocational\n(e.g., Job Training)"
+             "vocational" = "Vocational\n(e.g., Job Training)",
+             "any" = "Any"
            )) %>%
   ggplot(aes(support, prop, group = self_id)) +
   geom_col(aes(fill = self_id), position = "dodge") +
